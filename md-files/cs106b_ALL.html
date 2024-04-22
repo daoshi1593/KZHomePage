@@ -1,30 +1,4 @@
-import express, { static as expressStatic } from 'express';
-import { readFile, writeFile, } from 'fs';
-import { watch } from 'chokidar';
-import { marked } from 'marked';
-import { join } from 'path';
-import { promisify } from 'util';
-import { readdir } from 'fs/promises';
-
-const app = express();
-app.use(expressStatic('public')); // 用于提供静态文件，如CSS文件
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
-
-// 更新博客的函数
-async function updateBlog() {
-  const files = await readdir('../md-files');
-  let html = '';
-  for (const file of files) {
-    const data = await readFileAsync(join('../md-files', file), 'utf8');
-    const title = file.split('.')[0];
-    // 为每个页面创建一个链接
-    html += `
-    <dd>
-      <a href="md-files/${title}.html">${title}</a>
-      </dd>`;
-    // 记载每一个md文件内容,为每一个创建一个html页面在md-files文件夹下
-    const htmlData = `<!DOCTYPE html>
+<!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
@@ -57,9 +31,9 @@ async function updateBlog() {
               tester
             </a>
             <dl class="layui-nav-child">
-              <dd><a href="..\index.html">index</a></dd>
-              <dd><a href="..\cv.html">CV</a></dd>
-              <dd><a href="..\blog.html">Blog</a></dd>
+              <dd><a href="..index.html">index</a></dd>
+              <dd><a href="..cv.html">CV</a></dd>
+              <dd><a href="..log.html">Blog</a></dd>
             </dl>
           </li>
           <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
@@ -105,11 +79,53 @@ async function updateBlog() {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <!-- 标题居中 -->
-                <title style="font-size: 100%;">${title} <br></title>
-                <link rel="stylesheet" href="..\static\styles.css">
+                <title style="font-size: 100%;">cs106b_ALL <br></title>
+                <link rel="stylesheet" href="..staticstyles.css">
               </head>
               <body>
-                <div>${marked(data)}</div>
+                <div><h1>cs106b的相关学习</h1>
+<p>&emsp; 首先是cs106b的构成 
+&emsp; cs106b主要教的是C++中的abstractions(我也不知道啥意思),感觉是ADT和一些算法(主要是recruitions)
+&emsp; cs106b里面有配套的7个assignments和30个lecs,下面主要对他们进行记录</p>
+<h2>第一单元-assignment1(lec1-6)</h2>
+<p>&emsp;  主要以体验c++为主,里面有堆栈溢出的实践编程,可以感受c++程序在qt里的编译,链接情况,和debug相关 
+&emsp;  让人联想起了cmake,以后也许会学
+&emsp;  关于lecs,主要介绍一些ADT包括最基础的变量,list,array到strlib库里的vector,Set,Queue,Maps</p>
+<h2>第二单元-assignment2(lec7-8)</h2>
+<p>&emsp;  这里就开始了使用ADT的训练,最终目的就是完成最终的BFS的编写,利用队列,各种ADT,完成一个海水漫灌的模型,顺带的也介绍了一些基本知识如BIG o表示法和如何优化算法,评估算法优劣</p>
+<h2>第三单元-assignment3(lec10-14)</h2>
+<p>&emsp;  这里就开始了递归的训练,先讲基本的递归思想,例子,然后assignment要求实现BFS的一系列递归问题(难死我了) 
+&emsp;  在编写递归算法的基础上还要求掌握优化方法(记忆),便面不必须的开支</p>
+<h3>这里就需要做一个总结了,DFS和BFS的大总结,我这里学习这类算法是为了运用在项目上</h3>
+<p>&emsp;  <strong>对于DFS来说</strong>
+框架为</p>
+<pre><code class="language-(c++)">void dfs() //参数用来表示状态  
+{  
+    if(到达终点状态)  
+    {  
+        ...//根据题意添加  
+        return;  
+    }  
+    if(越界或者是不合法状态)  
+        return;  
+    if(特殊状态)//剪枝
+        return ;
+    for(扩展方式)  
+    {  
+        if(扩展方式所达到状态合法)  
+        {  
+            修改操作;//根据题意来添加  
+            标记；  
+            dfs（）；  
+            (还原标记)；  
+            //是否还原标记根据题意  
+            //如果加上（还原标记）就是 回溯法  
+        }  
+ 
+    }  
+}  
+</code></pre>
+</div>
               </body>
           </div>
         </div>
@@ -150,47 +166,4 @@ async function updateBlog() {
     });
     </script>
     </body>
-    </html>`;
-    await writeFileAsync(join('../md-files', `${title}.html`), htmlData);
-  }
-
-  // 读取blog.html的内容
-  const blogData = await readFileAsync('../blog.html', 'utf8');
-
-  // 找到标记的位置
-  const startMarker = '<!-- start insert -->';
-  const endMarker = '<!-- end insert -->';
-  const startIndex = blogData.indexOf(startMarker);
-  const endIndex = blogData.indexOf(endMarker);
-  if (startIndex === -1 || endIndex === -1) {
-    throw new Error(`Marker not found in file: ${startMarker} or ${endMarker}`);
-  }
-
-  // 在两个标记之间插入新的内容
-  const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex);
-
-  // 将修改后的内容写回blog.html文件
-  await writeFileAsync('../blog.html', newBlogData);
-
-  console.log('The blog has been updated!');
-}
-
-// 监视'md-files'文件夹
-const watcher = watch('../md-files', {
-  ignored: /^\./,
-  persistent: true
-});
-
-// 当检测到新文件被添加或修改时
-watcher.on('add', updateBlog);
-watcher.on('change', updateBlog);
-
-// 当检测到文件被删除时
-watcher.on('unlink', updateBlog);
-
-app.listen(3000, () => {
-  console.log('Server is running at http://localhost:3000');
-});
-
-// 初始更新
-updateBlog();
+    </html>
