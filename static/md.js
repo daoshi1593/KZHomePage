@@ -8,7 +8,6 @@ import { readdir } from 'fs/promises';
 
 const app = express();
 app.use(expressStatic('public')); // 用于提供静态文件，如CSS文件
-
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
