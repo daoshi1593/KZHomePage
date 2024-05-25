@@ -5,7 +5,6 @@ import { marked } from 'marked';
 import { join } from 'path';
 import { promisify } from 'util';
 import { readdir } from 'fs/promises';
-
 const app = express();
 app.use(expressStatic('public')); // 用于提供静态文件，如CSS文件
 const readFileAsync = promisify(readFile);
@@ -104,27 +103,54 @@ async function updateBlog() {
     throw new Error(`Marker not found in file: ${startMarker} or ${endMarker}`);
   }
 
-  // 在两个标记之间插入新的内容
-  const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex);
+  // 字符串插入
+  const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex); 
 
   // 将修改后的内容写回blog.html文件
   await writeFileAsync('../blog.html', newBlogData);
+  console.log('Blog updated');
 
-  console.log('The blog has been updated!');
+  
+  
+}
+
+async function removeDuplicates() {
+  const path = '../blog.html';
+
+  try {
+    // 读取文件内容
+    let content = await readFileAsync(path, 'utf8');
+    console.log('Removing duplicates...');
+    // 找到两个 marker 之间的所有 <dd> 模块
+    let matches = content.match(/<!-- start insert -->(.*)<!-- end insert -->/s);
+    console.log('匹配区域'+ matches[1]+ '长度'+ matches[1].length);
+    let dds = matches[0].match(/<dd>[\s\S]*?<\/dd>/g);
+    console.log('重复内容'+ dds);
+    let uniqueDds = [...new Set(dds)];
+    console.log('唯一插入'+ uniqueDds);
+    let newContent = content.replace(/<!-- start insert -->(.*)<!-- end insert -->/s, '<!-- start insert -->\n' + uniqueDds.join('\n') + '\n<!-- end insert -->');
+    console.log('新内容'+ newContent);
+    // 写入新内容
+    await writeFileAsync(path, newContent);
+
+    console.log('Duplicates removed');
+  } catch (err) {
+    console.error('Error removing duplicates:', err);
+  }
 }
 
 // 监视'md-files'文件夹
-const watcher = watch('../md-files', {
+const watcher = watch('C:\hit\个人主页\KZHomePage\md-files', {
   ignored: /^\./,
   persistent: true
 });
 
 // 当检测到新文件被添加或修改时
-watcher.on('add', updateBlog);
-watcher.on('change', updateBlog);
+watcher.on('add', updateBlog,removeDuplicates);
+watcher.on('change', updateBlog,removeDuplicates);
 
 // 当检测到文件被删除时
-watcher.on('unlink', updateBlog);
+watcher.on('unlink', updateBlog,removeDuplicates);
 
 app.listen(3000, () => {
   console.log('Server is running at http://localhost:3000');
@@ -132,3 +158,4 @@ app.listen(3000, () => {
 
 // 初始更新
 updateBlog();
+removeDuplicates();
