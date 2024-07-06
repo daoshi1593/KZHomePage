@@ -41,3 +41,44 @@ void dfs() //参数用来表示状态
     }  
 }  
 ```
+
+### 回溯及其优化
+- 探索,取消,体验各种数据结构
+- keep track of struct
+- index 给东西编序号然后回溯
+1.解决组合问题,给出一个集合的所有子集
+2.DFS 迷宫寻路
+ 
+Recurisive all matters
+1.抓住基本盘
+```cpp 
+if (a == number)
+{
+    do the basic case;
+    return {basic};
+}
+if (b < c)
+{
+    return somecases;
+}
+
+/* decisions */
+
+/* decison 1 under A condition */
+do the fuck ;
+
+/* decison 2 under A condition */
+do the fuck ;
+
+...
+
+/* decision n */
+do the fuck ;
+
+/* UNDO */
+
+undo the fuck ;
+
+
+return what we want;
+```
