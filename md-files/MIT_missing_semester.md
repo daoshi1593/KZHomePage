@@ -6,4 +6,3 @@ shell,editors(vim),data wrangling,git
 关于git的内容很有用,log处理和vim debug存疑</br>
 接下来就是makefile构建,语义化系统,加密的内容
 
-
