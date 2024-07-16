@@ -129,10 +129,9 @@ async function removeDuplicates() {
     let uniqueDds = [...new Set(dds)];
     console.log('唯一插入'+ uniqueDds);
     let newContent = content.replace(/<!-- start insert -->(.*)<!-- end insert -->/s, '<!-- start insert -->\n' + uniqueDds.join('\n') + '\n<!-- end insert -->');
-    console.log('新内容'+ newContent);
-    // 写入新内容
+    console.log('新内容'+ newContent+'长度'+ newContent.length);
+    // 将修改后的内容写回文件
     await writeFileAsync(path, newContent);
-
     console.log('Duplicates removed');
   } catch (err) {
     console.error('Error removing duplicates:', err);
