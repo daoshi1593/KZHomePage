@@ -89,31 +89,53 @@ async function updateBlog() {
 </html>
     `;
     await writeFileAsync(join('../md-files', `${title}.html`), htmlData);
+    console.log('File updated:', title);
   }
-
-  // 读取blog.html的内容
-  const blogData = await readFileAsync('../blog.html', 'utf8');
-
-  // 找到标记的位置
-  const startMarker = '<!-- start insert -->';
-  const endMarker = '<!-- end insert -->';
-  const startIndex = blogData.indexOf(startMarker);
-  const endIndex = blogData.indexOf(endMarker);
-  if (startIndex === -1 || endIndex === -1) {
-    throw new Error(`Marker not found in file: ${startMarker} or ${endMarker}`);
-  }
-
-  // 字符串插入
-  const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex); 
-
-  // 将修改后的内容写回blog.html文件
-  await writeFileAsync('../blog.html', newBlogData);
-  console.log('Blog updated');
 
   
   
 }
+async function blogchange() {
+  const files = await readdir('../md-files');
+  let html = '';
+  for (const file of files) {
+    const title = file.split('.')[0];
+    items.add(title);
+    // 为每个页面创建一个链接
+    
+  }
+  for (const item of items){
+    html += `
+    <dd>
+      <a href="md-files/${item}.html">${item}</a>
+      </dd>`;
+  }
+  console.log(items);
+// 读取blog.html的内容
+const blogData = await readFileAsync('../blog.html', 'utf8');
 
+// 找到标记的位置
+const startMarker = '<!-- start insert -->';
+const endMarker = '<!-- end insert -->';
+const startIndex = blogData.indexOf(startMarker);
+const endIndex = blogData.indexOf(endMarker);
+if (startIndex === -1 || endIndex === -1) {
+  throw new Error(`Marker not found in file: ${startMarker} or ${endMarker}`);
+}
+
+// 字符串插入
+console.log(html);
+const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex); 
+
+// 将修改后的内容写回blog.html文件
+await writeFileAsync('../blog.html', newBlogData);
+console.log('Blog updated');
+}
+
+
+
+
+// 删除重复的函数
 async function removeDuplicates() {
   const path = '../blog.html';
 
@@ -139,22 +161,27 @@ async function removeDuplicates() {
 }
 
 // 监视'md-files'文件夹
-const watcher = watch('C:\hit\个人主页\KZHomePage\md-files', {
-  ignored: /^\./,
-  persistent: true
-});
+// const watcher = watch('C:\hit\个人主页\KZHomePage\md-files', {
+//   ignored: /^\./,
+//   persistent: true
+// });
 
-// 当检测到新文件被添加或修改时
-watcher.on('add', updateBlog,removeDuplicates);
-watcher.on('change', updateBlog,removeDuplicates);
+// // 当检测到新文件被添加或修改时
+// watcher.on('add', updateBlog,removeDuplicates);
+// watcher.on('change', updateBlog,removeDuplicates);
 
-// 当检测到文件被删除时
-watcher.on('unlink', updateBlog,removeDuplicates);
+// // 当检测到文件被删除时
+// watcher.on('unlink', updateBlog,removeDuplicates);
 
-app.listen(3000, () => {
-  console.log('Server is running at http://localhost:3000');
-});
-
+// app.listen(3000, () => {
+//   console.log('Server is running at http://localhost:3000');
+// });
+let items = new Set();
 // 初始更新
-updateBlog();
-removeDuplicates();
+async function ALL() {
+  await updateBlog()
+  await blogchange()
+  
+}
+
+ALL()
