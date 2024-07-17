@@ -1,8 +1,12 @@
 /*! normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */
 html {
     font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%
+    -o-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -6076,7 +6080,8 @@ pre {
 
 .markdown-body p,.markdown-body blockquote,.markdown-body ul,.markdown-body ol,.markdown-body dl,.markdown-body table,.markdown-body pre {
     margin-top: 0;
-    margin-bottom: 16px
+    margin-bottom: 16px;
+    text-align: center;
 }
 
 .markdown-body hr {
