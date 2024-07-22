@@ -7,11 +7,11 @@ html {
     -o-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    text-align: left;
 }
 
 body {
     margin: 0;
-    text-align: left;
 }
 
 article,aside,details,figcaption,figure,footer,header,main,menu,nav,section {
