@@ -49,58 +49,57 @@
       
 
       <body>
-        <div><h1>cs106b的相关学习</h1>
-<p>&emsp; 首先是cs106b的构成 
-&emsp; cs106b主要教的是C++中的abstractions(我也不知道啥意思),感觉是ADT和一些算法(主要是recruitions)
-&emsp; cs106b里面有配套的7个assignments和30个lecs,下面主要对他们进行记录</p>
+        <div><h1>cs106b 的相关学习</h1>
+<p>首先是 cs106b 的构成
+cs106b 主要教的是 C++中的 abstractions(我也不知道啥意思),感觉是 ADT 和一些算法(主要是 recruitions)
+cs106b 里面有配套的 7 个 assignments 和 30 个 lecs,下面主要对他们进行记录
+[TOC]</p>
 <h2>第一单元-assignment1(lec1-6)</h2>
-<p>&emsp;  主要以体验c++为主,里面有堆栈溢出的实践编程,可以感受c++程序在qt里的编译,链接情况,和debug相关 
-&emsp;  让人联想起了cmake,以后也许会学
-&emsp;  关于lecs,主要介绍一些ADT包括最基础的变量,list,array到strlib库里的vector,Set,Queue,Maps</p>
+<p>主要以体验 c++为主,里面有堆栈溢出的实践编程,可以感受 c++程序在 qt 里的编译,链接情况,和 debug 相关
+让人联想起了 cmake,以后也许会学
+关于 lecs,主要介绍一些 ADT 包括最基础的变量,list,array 到 strlib 库里的 vector,Set,Queue,Maps</p>
 <h2>第二单元-assignment2(lec7-8)</h2>
-<p>&emsp;  这里就开始了使用ADT的训练,最终目的就是完成最终的BFS的编写,利用队列,各种ADT,完成一个海水漫灌的模型,顺带的也介绍了一些基本知识如BIG o表示法和如何优化算法,评估算法优劣</p>
-<h2>第三单元-assignment3(lec10-14)</h2>
-<p>&emsp;  这里就开始了递归的训练,先讲基本的递归思想,例子,然后assignment要求实现BFS的一系列递归问题(难死我了) 
-&emsp;  在编写递归算法的基础上还要求掌握优化方法(记忆),便面不必须的开支</p>
-<h3>这里就需要做一个总结了,DFS和BFS的大总结,我这里学习这类算法是为了运用在项目上</h3>
-<p>&emsp;  <strong>对于DFS来说</strong>
+<p>这里就开始了使用 ADT 的训练,最终目的就是完成最终的 BFS 的编写,利用队列,各种 ADT,完成一个海水漫灌的模型,顺带的也介绍了一些基本知识如 BIG o 表示法和如何优化算法,评估算法优劣</p>
+<h2>第三单元-assignment3,assignment4(lec10-14)</h2>
+<p>这里就开始了递归的训练,先讲基本的递归思想,例子,然后 assignment 要求实现 BFS 的一系列递归问题(难死我了)
+在编写递归算法的基础上还要求掌握优化方法(记忆),便面不必须的开支
+<strong>这里就需要做一个总结了,DFS 和 BFS 的大总结</strong>
+<strong>对于 DFS 来说</strong>
 框架为</p>
-<pre><code class="language-c++">void dfs() //参数用来表示状态  
-{  
-    if(到达终点状态)  
-    {  
-        ...//根据题意添加  
-        return;  
-    }  
-    if(越界或者是不合法状态)  
-        return;  
+<pre><code class="language-c++">void dfs() //参数用来表示状态
+{
+    if(到达终点状态)
+    {
+        ...//根据题意添加
+        return;
+    }
+    if(越界或者是不合法状态)
+        return;
     if(特殊状态)//剪枝
         return ;
-    for(扩展方式)  
-    {  
-        if(扩展方式所达到状态合法)  
-        {  
-            修改操作;//根据题意来添加  
-            标记；  
-            dfs（）；  
-            (还原标记)；  
-            //是否还原标记根据题意  
-            //如果加上（还原标记）就是 回溯法  
-        }  
- 
-    }  
-}  
+    for(扩展方式)
+    {
+        if(扩展方式所达到状态合法)
+        {
+            修改操作;//根据题意来添加
+            标记；
+            dfs（）；
+            (还原标记)；
+            //是否还原标记根据题意
+            //如果加上（还原标记）就是 回溯法
+        }
+
+    }
+}
 </code></pre>
 <h3>回溯及其优化</h3>
 <ul>
 <li>探索,取消,体验各种数据结构</li>
 <li>keep track of struct</li>
-<li>index 给东西编序号然后回溯
-1.解决组合问题,给出一个集合的所有子集
+<li>index 给东西编序号然后回溯 1.解决组合问题,给出一个集合的所有子集
 2.DFS 迷宫寻路</li>
 </ul>
-<p>Recurisive all matters
-1.抓住基本盘</p>
+<p><span id="Recurisive_all_matters">Recurisive all matters</span> 1.抓住基本盘</p>
 <pre><code class="language-cpp">if (a == number)
 {
     do the basic case;
@@ -131,13 +130,13 @@ undo the fuck ;
 
 return what we want;
 </code></pre>
-<h3>assignment 3 : 回溯与debug技巧</h3>
+<h3>assignment 3 : 回溯与 debug 技巧</h3>
 <ul>
 <li>回溯 :constrain sets</li>
 </ul>
-<h4>关于DFS的大讨论:什么时候回溯,什么时候不回溯,函数传参</h4>
-<p>matter A:有序组合</p>
-<pre><code class="language-c++">Set&lt;string&gt; allEmphasesOfHelper(Vector&lt;string&gt; decisionmade, Vector&lt;string&gt; decisiontomake){
+<h4>关于 DFS 的大讨论:什么时候回溯,什么时候不回溯,函数传参</h4>
+<p><strong>matter A:有序组合</strong></p>
+<pre><code class="language-cpp">Set&lt;string&gt; allEmphasesOfHelper(Vector&lt;string&gt; decisionmade, Vector&lt;string&gt; decisiontomake){
     Set&lt;string&gt; emphasis;
     if (decisiontomake.isEmpty())
         return emphasis;
@@ -175,18 +174,338 @@ return what we want;
 </code></pre>
 <ul>
 <li>给定一串单词输出所有子集(认为大写和小写是两种状态,则与包含,不包含同构),现在这个问题咋解决?要不要回溯?</li>
-<li>答:仍然是深度优先搜索,递归基本盘,参数为decisionToMake,decisionMade;</li>
-<li>然而由于要考虑一串情况(且有序),可以直接循环,每个循环里面是这样的一种情况:包括Cur,或者不包括Cur;</li>
+<li>答:仍然是深度优先搜索,递归基本盘,参数为 decisionToMake,decisionMade;</li>
+<li>然而由于要考虑一串情况(且有序),可以直接循环,每个循环里面是这样的一种情况:包括 Cur,或者不包括 Cur;</li>
 <li>此情况不用回溯,因为按值传递,每次调用自己的时候是在创造副本,操作副本,在调用结束退回上一级的时候不会影响上一层次的事情,所以是不需要回溯的</li>
 <li>But the point is 什么时候需要回溯</li>
-<li>答曰:按引用传递和按指针传递时每一次向下会改变参数,且此参数唯一,所以在每一次结束的时候需要回溯,防止这样一种情况:从低层到高层时,高层使用的参数和底层一样,故需要在低层结尾回溯,也就是使参数在这一个调用内不发生改变(按值传递本就是这样的,所以不需要回溯)</li>
+<li>答曰:按引用传递和按指针传递时每一次向下会改变参数,且此参数唯一,所以在每一次结束的时候需要回溯,防止这样一种情况:从低层到高层时,高层使用的参数和底层一样,故需要在低层结尾回溯,也就是使参数在这一个调用内不发生改变(按值传递本就是这样的,所以不需要回溯)
+<strong>matter B:constrained subsets</strong></li>
+<li>在有限制的条件下排列班次,使 x 最大化</li>
+</ul>
+<pre><code class="language-cpp">Set&lt;Shift&gt; highestValueScheduleFor(const Set&lt;Shift&gt;&amp; shifts, int maxHours) {
+
+    Set&lt;Shift&gt; shiftmade = {};
+    Set&lt;Shift&gt; shifttomake = shifts;
+    int shiftHours = 0 ;
+    cout &lt;&lt; shifttomake &lt;&lt;endl &lt;&lt;&quot;-----------------------------------------&quot;&lt;&lt;endl ;
+    return highestValueScheduleForhelper(shiftmade,shifttomake,shiftHours,maxHours);
+}
+int checkShift (const Shift &amp;Cur,const Set&lt;Shift&gt;&amp; shiftmade)
+{
+    for (Shift s : shiftmade)
+    {
+        if (overlapsWith(s,Cur))
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+int cal (const Set&lt;Shift&gt; &amp;shiftmade)
+{
+    int cal = 0;
+    for (const Shift &amp;s : shiftmade)
+    {
+        cal += valueOf(s);
+    }
+    return cal;
+}
+
+Set&lt;Shift&gt; highestValueScheduleForhelper( Set&lt;Shift&gt;&amp; shiftmade,
+                                          Set&lt;Shift&gt;&amp; shifttomake,
+                                          int &amp;shiftHours,
+                                          int &amp;maxHours){
+
+    if (maxHours &lt; 0)
+    {
+        error(&quot;fuck&quot;);
+    }
+    if (maxHours == 0)
+    {
+        return {};
+    }
+
+    //basic cases
+    if (shifttomake.isEmpty())
+    {
+        return shiftmade;
+    }
+
+    Set&lt;Shift&gt; UndosetTomake = {};
+    Set&lt;Shift&gt; UndosetMade = {};
+    int UndoHours = 0;
+
+    Shift Cur = shifttomake.first();
+
+    shifttomake = shifttomake - Cur;
+    UndosetTomake = UndosetTomake + Cur ;
+
+    //判断Cur是否是考虑对象
+    if (lengthOf(Cur) &lt;= 0){
+            error(&quot;fuck&quot;);
+    }
+    if (checkShift(Cur,shiftmade)||shiftHours + lengthOf(Cur)&gt;maxHours)
+    {
+            Set&lt;Shift&gt; without = highestValueScheduleForhelper(shiftmade,shifttomake,shiftHours,maxHours);
+            shifttomake = shifttomake + UndosetTomake ;
+            return without;
+        }
+
+    //Undo 的适合也许得恢复所有的改变.把所有抛弃的Cur放在一个集合里(?
+    //exclude
+    Set&lt;Shift&gt; MaxValueWithout =highestValueScheduleForhelper(shiftmade,
+                                                            shifttomake,
+                                                            shiftHours,
+                                                            maxHours);
+
+    //include
+    shiftmade = shiftmade + Cur ;
+    shiftHours = shiftHours + lengthOf(Cur);
+
+    //Undo
+    UndoHours = UndoHours + lengthOf(Cur);
+    UndosetMade = UndosetMade + Cur ;
+
+
+    Set&lt;Shift&gt; MaxValueWith = highestValueScheduleForhelper(shiftmade,
+                                                         shifttomake,
+                                                         shiftHours,
+                                                         maxHours);
+    //Undo
+
+    shiftmade = shiftmade - UndosetMade;
+    shifttomake = shifttomake + UndosetTomake ;
+    shiftHours = shiftHours - UndoHours;
+
+    //end
+    if (cal(MaxValueWith) &gt;= cal(MaxValueWithout))
+    {
+        return MaxValueWith;
+    }
+    else {
+        return MaxValueWithout;
+    }
+}
+</code></pre>
+<ul>
+<li>限制条件</li>
+<li>单变量最优化</li>
+<li>按引用传递:需要回溯(认为回溯与否取决于使用参数生命周期)</li>
+<li>基本模板 <a href="#Recurisive_all_matters">Recurisive_all_matters</a></li>
+<li>BFS 的本质是穷举</li>
+</ul>
+<p><strong>matter C:寻找完美匹配</strong></p>
+<pre><code class="language-cpp">
+bool hasPerfectMatching(const Map&lt;string, Set&lt;string&gt;&gt; &amp;possibleLinks, Set&lt;Pair&gt;&amp; matching) {
+
+    if (possibleLinks.isEmpty())
+    {
+        return true;
+    }
+    if (possibleLinks.size()%2 == 1)
+    {
+        return false;
+    }
+
+    string Cur = possibleLinks.firstKey();
+    if (possibleLinks.get(Cur).isEmpty())
+    {
+        return false ;
+    }
+    for (string CurLink:possibleLinks.get(Cur))
+    {
+        Map&lt;string, Set&lt;string&gt;&gt; possibleLinksc = possibleLinks;
+        /*关键变量在这里,这个case不需要回溯,就是因为这个函数本质上只包括一个循环,每个循环的参数都不是同一个参数,所以完全不需要回溯,只在一个循环内进行修改*/
+        Pair chosen(Cur,CurLink);
+        matching = matching + chosen;
+        Set&lt;string&gt; Curs = possibleLinksc.get(Cur);
+        Set&lt;string&gt; CurLinks = possibleLinksc.get(CurLink);
+        possibleLinksc.remove(Cur);
+        possibleLinksc.remove(CurLink);
+        //图里面的crud
+        for (string Curt:possibleLinksc.keys())
+        {
+            if (possibleLinksc.get(Curt).contains(CurLink))
+            {
+                possibleLinksc.put(Curt,possibleLinksc.get(Curt)-CurLink);
+            }
+            if (possibleLinksc.get(Curt).contains(Cur))
+            {
+                possibleLinksc.put(Curt,possibleLinksc.get(Curt)-Cur);
+            }
+        }
+        if (hasPerfectMatching(possibleLinksc,matching))
+        {
+            return true;
+        }
+        else{
+            matching = matching - chosen;
+        }
+
+    }
+    return false;
+}
+</code></pre>
+<ul>
+<li>两个参数按引用传递,一个图一个 matching,图被 copy,所以图无需回溯,matching 没有被 copy,所以 matching 需要回溯</li>
+<li>操作图的时候 crud</li>
+<li>copy 每一轮增加开销,直接操作则不增加开销,不过回溯可能不好写</li>
+</ul>
+<p><strong>matter D: maximumMtching</strong></p>
+<pre><code class="language-cpp">Set&lt;Pair&gt; maximumWeightMatchingRec(const Map&lt;string, Map&lt;string, int&gt;&gt; links, Set&lt;Pair&gt; team) {
+    //baseline
+    if (links.isEmpty()) {
+        return team;
+    }
+
+    //create a answer with value
+    Map&lt;Set&lt;Pair&gt;, int&gt; possiblePairs = {};
+    //select Current
+    string person = links.firstKey();
+
+    //consider all maps for Cur
+    for (const string &amp; partner : links[person]) {
+        //pruning :minus value not considered
+        if (links[person][partner] &lt; 0) {
+            continue;
+        }
+        //consider this case(choosen one)
+        Pair pair = {person, partner};
+        //copy version for graph
+        auto backup = links;
+        //change for choose
+        backup.remove(person);
+        backup.remove(partner);
+        for (const string &amp; classmate : backup) {
+            if (backup[classmate].containsKey(person)) {
+                backup[classmate].remove(person);
+            }
+            if (backup[classmate].containsKey(partner)) {
+                backup[classmate].remove(partner);
+            }
+        }
+
+        Set&lt;Pair&gt; program = maximumWeightMatchingRec(backup, team + pair) + team;
+        possiblePairs[program] = cal(links, program);
+    }
+    //new copy, the same as choose case
+    auto backup = links;
+    backup.remove(person);
+    //not choose case
+        //change for not choose
+    for (const string &amp; classmate : backup) {
+        if (backup[classmate].containsKey(person)) {
+            backup[classmate].remove(person);
+        }
+    }
+    //unchoose case
+    Set&lt;Pair&gt; program = maximumWeightMatchingRec(backup, team);
+    possiblePairs[program] = cal(links, program);
+
+    team = possiblePairs.firstKey();
+    //choose the highest case
+    for (Set&lt;Pair&gt; combination : possiblePairs) {
+        if (possiblePairs[combination] &gt; possiblePairs[team]) {
+            team = combination;
+        }
+    }
+
+    return team;
+}
+</code></pre>
+<ul>
+<li>数据结构的使用:一个图(map),一个 chosen(set)</li>
+<li>在函数内部开一个记录 set 权值的 map,用来寻觅最大值开销大但是算法方便</li>
+<li>回溯:不回溯,因为全是 copy</li>
+</ul>
+<p><strong>试修改版本</strong></p>
+<pre><code class="language-cpp">Set&lt;Pair&gt; maximumWeightMatchingRec(const Map&lt;string, Map&lt;string, int&gt;&gt;&amp; links, Set&lt;Pair&gt;&amp; team) {
+    //baseline
+    if (links.isEmpty()) {
+        return team;
+    }
+
+    //select Current
+    string person = links.firstKey();
+
+    //consider all maps for Cur
+    for (const string &amp; partner : links[person]) {
+        //pruning :minus value not considered
+        if (links[person][partner] &lt; 0) {
+            continue;
+        }
+        //consider this case(choosen one)
+        Pair pair = {person, partner};
+        //change for choose
+            //copy version
+        Map&lt;string, Map&lt;string, int&gt;&gt; backup = links;
+        backup.remove(person);
+        backup.remove(partner);
+        for (const string &amp; classmate : backup) {
+            if (backup[classmate].containsKey(person)) {
+                backup[classmate].remove(person);
+            }
+            if (backup[classmate].containsKey(partner)) {
+                backup[classmate].remove(partner);
+            }
+        }
+        //method for choose max:change meta data
+        Set&lt;Pair&gt; program = maximumWeightMatchingRec(backup, team + pair);
+        int weight = cal(links, program);
+        if (weight &gt; cal(links, team)) {
+            team = program;
+        }
+    }
+    //not choose case
+    Map&lt;string, Map&lt;string, int&gt;&gt; backup = links;
+    backup.remove(person);
+    for (const string &amp; classmate : backup) {
+        if (backup[classmate].containsKey(person)) {
+            backup[classmate].remove(person);
+        }
+    }
+    //unchoose case
+    Set&lt;Pair&gt; program = maximumWeightMatchingRec(backup, team);
+    int weight = cal(links, program);
+    if (weight &gt; cal(links, team)) {
+        team = program;
+    }
+
+    return team;
+}
+</code></pre>
+<ul>
+<li>if firstkey has x partners ,there are (x+1) cases</li>
+<li>just find the max set for x+1 cases</li>
+<li>trace method: <pre><code class="language-cpp">//choose the set for the heighst value
+helper(Set&amp; A,Graph B){
+    do one choose
+    for (case:cases){
+        pruning ;
+        choose ;
+        change A ;
+        int value = cal(A) ;
+        if (cal(current)&gt;value){
+            A = current
+        }
+    }
+    unchoose
+    int value = cal(A) ;
+    if (cal(current) &gt; value){
+        A = current
+    }
+    return A ;
+}
+</code></pre>
+</li>
+</ul>
+<h4>debug 技巧:recursion</h4>
+<ul>
+<li>三种方式:按断点,单步跳过,单步跳入,单步跳出</li>
 </ul>
 <h2>第四单元 object oriental programming</h2>
 <p>类-------
-class 三步走
-1.成员变量
-2.成员函数
-3.构造器</p>
+class 三步走 1.成员变量 2.成员函数 3.构造器</p>
 </div>
       </body>
 
