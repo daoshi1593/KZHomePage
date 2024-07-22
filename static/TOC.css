@@ -1,19 +1,38 @@
 #toc {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 200px;
-    background: #f9f9f9;
-    border: 1px solid #ccc;
-    padding: 10px;
-    overflow-y: auto;
-    max-height: 80%;
-  }
-  #toc a {
-    text-decoration: none;
-    display: block;
-    padding: 5px;
-  }
-  #toc a.active {
-    background-color: #eee;
-  }
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 250px;
+  background: #f3f3f3;
+  border: 1px solid #fafafa;
+  padding: 10px;
+  overflow-y: auto;
+  max-height: 80%;
+  
+  
+}
+
+#toc ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+#toc > ul {
+  display: block;
+}
+
+.toc-item {
+  cursor: pointer;
+  position: relative;
+  list-style: disc;
+  font-size: 14px;
+}
+
+.toc-item ul {
+  display: none;
+}
+
+.toc-item.open > ul {
+  display: block;
+}

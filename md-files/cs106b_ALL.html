@@ -20,9 +20,42 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","headline":"cs106b_ALL","url":"https://daoshi1593.github.io/md-files/cs106b_ALL.html"}</script>
 <!-- End Jekyll SEO tag -->
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toc = document.getElementById('toc');
+      const ul = document.createElement('ul');
+      toc.appendChild(ul);
+      const headings = document.querySelectorAll('h1, h2, h3');
+      let currentList = ul;
+      headings.forEach(heading => {
+        const level = parseInt(heading.tagName.substring(1), 10);
+        const item = document.createElement('li');
+        item.classList.add('toc-item');
+        const link = document.createElement('a');
+        const dropdownBtn = document.createElement('span'); // 
+      
+        const id = heading.id || heading.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+        heading.id = id; // 正确赋值
+        link.href = `#${id}`;
+        link.textContent = heading.textContent;
+        link.onclick = (e) => e.stopPropagation(); // 防止点击链接时触发父元素的点击事件
+        item.appendChild(link);
+        item.appendChild(dropdownBtn); // 将下拉按钮添加到目录项中
+        if (level === 3) { // 修改此处，直接创建三级标题的列表
+          if (!currentList.querySelector('ul')) {
+            const newList = document.createElement('ul');
+            currentList.appendChild(newList); // 修改此处，直接将新列表添加到当前列表项
+            currentList = newList;
+          }
+        } else {
+          currentList = ul; // 如果不是三级标题，重置currentList为最外层的ul
+        }
+        currentList.appendChild(item);
+      });
+      
+    });
+    </script>
     <link rel="stylesheet" href="../static/blog.css">
-    <link href="../static/index_gengerate.js" rel="stylesheet">
     <link rel="stylesheet" href="../static/TOC.css">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
@@ -48,9 +81,10 @@
             <a href="https://daoshi1593.github.io/cv">CV</a>
         </h2>
       </div>
-      
-
+     
       <body>
+        <div id="toc">目录</div>
+
         <div><h1>cs106b 的相关学习</h1>
 <p>首先是 cs106b 的构成
 cs106b 主要教的是 C++中的 abstractions(我也不知道啥意思),感觉是 ADT 和一些算法(主要是 recruitions)
