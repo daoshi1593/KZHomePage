@@ -7,7 +7,6 @@ html {
     -o-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    text-align: left;
 }
 
 body {
@@ -346,7 +345,8 @@ pre {
     margin-top: 0;
     margin-bottom: 0;
     font-family: "SFMono-Regular",Consolas,"Liberation Mono",Menlo,Courier,monospace;
-    font-size: 12px
+    font-size: 12px ;
+    text-align: left
 }
 
 .octicon {
@@ -6037,7 +6037,9 @@ pre {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
     font-size: 16px;
     line-height: 1.5;
-    word-wrap: break-word
+    word-wrap: break-word;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .markdown-body::before {
@@ -6082,7 +6084,7 @@ pre {
 .markdown-body p,.markdown-body blockquote,.markdown-body ul,.markdown-body ol,.markdown-body dl,.markdown-body table,.markdown-body pre {
     margin-top: 0;
     margin-bottom: 16px;
-    text-align: center;
+    text-align:left;
 }
 
 .markdown-body hr {
