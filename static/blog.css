@@ -6038,8 +6038,10 @@ pre {
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
-    margin-left: 250px;
-    margin-right: 50px;
+    margin-right: 15%;
+    margin-left: 24%;
+    
+    /*left250,right50 */
 }
 
 .markdown-body::before {

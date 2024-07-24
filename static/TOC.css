@@ -3,13 +3,13 @@
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  width: 250px;
+  width: 24%;
   background: #f3f3f3;
   border: 1px solid #fafafa;
   padding: 10px;
   overflow-y: auto;
   max-height: 80%;
-  
+  font-size: 14px;
   
 }
 
@@ -37,4 +37,5 @@
 
 .toc-item.open > ul {
   display: block;
+  
 }
