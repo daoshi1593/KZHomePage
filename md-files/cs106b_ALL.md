@@ -472,6 +472,108 @@ Set<Pair> maximumWeightMatchingRec(const Map<string, Map<string, int>>& links, S
         return A ;
     }
     ```
+**matter E:wrong cases**
+```cpp
+bool canBeMadeDisasterReady(const Map<string, Set<string>>& roadNetwork,
+                            int numCities,
+                            Set<string>& supplyLocations) {
+    //baseline
+    if (numCities<0){
+        error("s");
+    }
+    if (supplyLocations.size()>numCities){
+        return false ;
+    }
+    if(supplyLocations.size() <= numCities && roadNetwork.isEmpty()){
+        return true ;
+    }
+    string city = roadNetwork.firstKey();
+    Set<string> Cur = roadNetwork[city];
+    Cur.add(city);
+    Map<string, Set<string>> copygraph = roadNetwork;
+    for (string cover:Cur){
+        Map<string, Set<string>> copy = roadNetwork;
+        supplyLocations.add(cover);
+        if (supplyLocations.size()>numCities){
+            supplyLocations.remove(cover);
+            continue ;
+        }
+        for (string coverd:copygraph[cover]){
+            copy.remove(coverd);
+        }
+        copy.remove(cover);
+        if (canBeMadeDisasterReady(copy,numCities,supplyLocations)){
+        }else{
+            supplyLocations.remove(cover) ;
+            continue ;
+        }
+    }
+    return false ;
+}
+```
+wrong : stack overflow,more precise,change procedure is wrong
+
+**correct answer**
+```cpp
+//helper function must be there
+//separate args and calls 
+bool canBeMadeDisasterReady(const Map<string, Set<string>>& roadNetwork,
+                            int numCities,
+                            Set<string>& supplyLocation){
+                            //call error
+    if (numCities < 0) {
+        error("num of supplied city less than 0");
+    }
+    Set<string> remaining;
+    for (string city : roadNetwork) {
+        remaining += city;
+    }
+    //remaining contains all citys
+    return helper(roadNetwork, numCities, supplyLocations, remaining);
+}
+//helper function
+//4 args 
+bool helper(const Map<string, Set<string>> & roadNetwork,
+            int numCitys,
+            Set<string>& supplyLocations,
+            Set<string>& remaining) {
+    if (numCitys < 0) {
+        return false;
+    }
+    if (remaining.isEmpty() && numCitys >= 0) {
+        return true;
+    }
+    //there are only two cases
+    // case 1:
+    // choose one of the remaining to supplyLocations
+    string choose = remaining.first();
+    Set<string> neighbors = roadNetwork[choose];
+    Set<string> left = remaining - choose - neighbors;
+    supplyLocations += choose;     // choose
+    if (helper(roadNetwork, numCitys - 1, supplyLocations, left)) {  // explore
+        return true;
+    }
+    //back
+    supplyLocations -= choose;  // unchoose
+
+    // case 2: choose one of the remaining's neighbor to supplyLocations
+    for (string neighbor : neighbors) {
+        //neighbor will be covered
+        //neighborsOfneighbor is citys coverd by neighbor
+        Set<string> neighborsOfNeighbor = roadNetwork[neighbor];
+        //left is a set about citys uncoverd
+        Set<string> left = remaining - neighborsOfNeighbor - neighbor;
+        supplyLocations += neighbor;
+        //inplement by decreasing numCitys
+        if (helper(roadNetwork, numCitys - 1, supplyLocations, left)) {
+            return true;
+        }
+        //back
+        supplyLocations -= neighbor;
+    }
+    return false;
+}
+```
 
 #### debug 技巧:recursion
 

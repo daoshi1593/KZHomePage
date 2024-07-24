@@ -22,6 +22,7 @@
 <!-- End Jekyll SEO tag -->
 
     <link rel="stylesheet" href="../static/blog.css">
+    <link rel="stylesheet" href="../static/TOC.css">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -49,6 +50,49 @@
       
 
       <body>
+      <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const toc = document.getElementById("toc");
+            const ul = document.createElement("ul");
+            toc.appendChild(ul);
+            const headings = document.querySelectorAll("h1, h2, h3");
+            let currentLevel = 1; // 初始层级设为1，对应h1
+            let currentUl = ul;
+
+            headings.forEach((heading, index) => {
+              const level = parseInt(heading.tagName.substring(1), 10);
+              const item = document.createElement("li");
+              const link = document.createElement("a");
+              const id = `heading-${index}`;
+
+              heading.id = id;
+              link.href = `#${id}`;
+              link.textContent = heading.textContent;
+              item.appendChild(link);
+
+              // 根据标题的层级调整或创建新的UL
+              while (level > currentLevel) {
+                const newUl = document.createElement("ul");
+                if (!currentUl.lastElementChild) {
+                  currentUl.appendChild(document.createElement("li"));
+                }
+                currentUl.lastElementChild.appendChild(newUl);
+                currentUl = newUl;
+                currentLevel++;
+              }
+              while (level < currentLevel && currentUl.parentNode !== toc) {
+                currentUl = currentUl.parentNode.closest("ul");
+                currentLevel--;
+              }
+
+              // 如果当前层级与目标层级相同，直接添加
+              if (level === currentLevel) {
+                currentUl.appendChild(item);
+              }
+            });
+          });
+        </script>
+      <div id="toc">目录</div>
         <div><h1>lectures</h1>
 <h2>Bits,Bytes and integer</h2>
 <ul>

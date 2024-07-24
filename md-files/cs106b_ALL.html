@@ -20,41 +20,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","headline":"cs106b_ALL","url":"https://daoshi1593.github.io/md-files/cs106b_ALL.html"}</script>
 <!-- End Jekyll SEO tag -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const toc = document.getElementById('toc');
-      const ul = document.createElement('ul');
-      toc.appendChild(ul);
-      const headings = document.querySelectorAll('h1, h2, h3');
-      let currentList = ul;
-      headings.forEach(heading => {
-        const level = parseInt(heading.tagName.substring(1), 10);
-        const item = document.createElement('li');
-        item.classList.add('toc-item');
-        const link = document.createElement('a');
-        const dropdownBtn = document.createElement('span'); // 
-      
-        const id = heading.id || heading.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-        heading.id = id; // 正确赋值
-        link.href = `#${id}`;
-        link.textContent = heading.textContent;
-        link.onclick = (e) => e.stopPropagation(); // 防止点击链接时触发父元素的点击事件
-        item.appendChild(link);
-        item.appendChild(dropdownBtn); // 将下拉按钮添加到目录项中
-        if (level === 3) { // 修改此处，直接创建三级标题的列表
-          if (!currentList.querySelector('ul')) {
-            const newList = document.createElement('ul');
-            currentList.appendChild(newList); // 修改此处，直接将新列表添加到当前列表项
-            currentList = newList;
-          }
-        } else {
-          currentList = ul; // 如果不是三级标题，重置currentList为最外层的ul
-        }
-        currentList.appendChild(item);
-      });
-      
-    });
-    </script>
+
     <link rel="stylesheet" href="../static/blog.css">
     <link rel="stylesheet" href="../static/TOC.css">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
@@ -81,10 +47,52 @@
             <a href="https://daoshi1593.github.io/cv">CV</a>
         </h2>
       </div>
-     
-      <body>
-        <div id="toc">目录</div>
+      
 
+      <body>
+      <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const toc = document.getElementById("toc");
+            const ul = document.createElement("ul");
+            toc.appendChild(ul);
+            const headings = document.querySelectorAll("h1, h2, h3");
+            let currentLevel = 1; // 初始层级设为1，对应h1
+            let currentUl = ul;
+
+            headings.forEach((heading, index) => {
+              const level = parseInt(heading.tagName.substring(1), 10);
+              const item = document.createElement("li");
+              const link = document.createElement("a");
+              const id = `heading-${index}`;
+
+              heading.id = id;
+              link.href = `#${id}`;
+              link.textContent = heading.textContent;
+              item.appendChild(link);
+
+              // 根据标题的层级调整或创建新的UL
+              while (level > currentLevel) {
+                const newUl = document.createElement("ul");
+                if (!currentUl.lastElementChild) {
+                  currentUl.appendChild(document.createElement("li"));
+                }
+                currentUl.lastElementChild.appendChild(newUl);
+                currentUl = newUl;
+                currentLevel++;
+              }
+              while (level < currentLevel && currentUl.parentNode !== toc) {
+                currentUl = currentUl.parentNode.closest("ul");
+                currentLevel--;
+              }
+
+              // 如果当前层级与目标层级相同，直接添加
+              if (level === currentLevel) {
+                currentUl.appendChild(item);
+              }
+            });
+          });
+        </script>
+      <div id="toc">目录</div>
         <div><h1>cs106b 的相关学习</h1>
 <p>首先是 cs106b 的构成
 cs106b 主要教的是 C++中的 abstractions(我也不知道啥意思),感觉是 ADT 和一些算法(主要是 recruitions)
@@ -533,8 +541,106 @@ helper(Set&amp; A,Graph B){
     return A ;
 }
 </code></pre>
-</li>
+<strong>matter E:wrong cases</strong></li>
 </ul>
+<pre><code class="language-cpp">bool canBeMadeDisasterReady(const Map&lt;string, Set&lt;string&gt;&gt;&amp; roadNetwork,
+                            int numCities,
+                            Set&lt;string&gt;&amp; supplyLocations) {
+    //baseline
+    if (numCities&lt;0){
+        error(&quot;s&quot;);
+    }
+    if (supplyLocations.size()&gt;numCities){
+        return false ;
+    }
+    if(supplyLocations.size() &lt;= numCities &amp;&amp; roadNetwork.isEmpty()){
+        return true ;
+    }
+    string city = roadNetwork.firstKey();
+    Set&lt;string&gt; Cur = roadNetwork[city];
+    Cur.add(city);
+    Map&lt;string, Set&lt;string&gt;&gt; copygraph = roadNetwork;
+    for (string cover:Cur){
+        Map&lt;string, Set&lt;string&gt;&gt; copy = roadNetwork;
+        supplyLocations.add(cover);
+        if (supplyLocations.size()&gt;numCities){
+            supplyLocations.remove(cover);
+            continue ;
+        }
+        for (string coverd:copygraph[cover]){
+            copy.remove(coverd);
+        }
+        copy.remove(cover);
+        if (canBeMadeDisasterReady(copy,numCities,supplyLocations)){
+        }else{
+            supplyLocations.remove(cover) ;
+            continue ;
+        }
+    }
+    return false ;
+}
+</code></pre>
+<p>wrong : stack overflow,more precise,change procedure is wrong</p>
+<p><strong>correct answer</strong></p>
+<pre><code class="language-cpp">//helper function must be there
+//separate args and calls 
+bool canBeMadeDisasterReady(const Map&lt;string, Set&lt;string&gt;&gt;&amp; roadNetwork,
+                            int numCities,
+                            Set&lt;string&gt;&amp; supplyLocation){
+                            //call error
+    if (numCities &lt; 0) {
+        error(&quot;num of supplied city less than 0&quot;);
+    }
+    Set&lt;string&gt; remaining;
+    for (string city : roadNetwork) {
+        remaining += city;
+    }
+    //remaining contains all citys
+    return helper(roadNetwork, numCities, supplyLocations, remaining);
+}
+//helper function
+//4 args 
+bool helper(const Map&lt;string, Set&lt;string&gt;&gt; &amp; roadNetwork,
+            int numCitys,
+            Set&lt;string&gt;&amp; supplyLocations,
+            Set&lt;string&gt;&amp; remaining) {
+    if (numCitys &lt; 0) {
+        return false;
+    }
+    if (remaining.isEmpty() &amp;&amp; numCitys &gt;= 0) {
+        return true;
+    }
+    //there are only two cases
+    // case 1:
+    // choose one of the remaining to supplyLocations
+    string choose = remaining.first();
+    Set&lt;string&gt; neighbors = roadNetwork[choose];
+    Set&lt;string&gt; left = remaining - choose - neighbors;
+    supplyLocations += choose;     // choose
+    if (helper(roadNetwork, numCitys - 1, supplyLocations, left)) {  // explore
+        return true;
+    }
+    //back
+    supplyLocations -= choose;  // unchoose
+
+    // case 2: choose one of the remaining&#39;s neighbor to supplyLocations
+    for (string neighbor : neighbors) {
+        //neighbor will be covered
+        //neighborsOfneighbor is citys coverd by neighbor
+        Set&lt;string&gt; neighborsOfNeighbor = roadNetwork[neighbor];
+        //left is a set about citys uncoverd
+        Set&lt;string&gt; left = remaining - neighborsOfNeighbor - neighbor;
+        supplyLocations += neighbor;
+        //inplement by decreasing numCitys
+        if (helper(roadNetwork, numCitys - 1, supplyLocations, left)) {
+            return true;
+        }
+        //back
+        supplyLocations -= neighbor;
+    }
+    return false;
+}
+</code></pre>
 <h4>debug 技巧:recursion</h4>
 <ul>
 <li>三种方式:按断点,单步跳过,单步跳入,单步跳出</li>
@@ -554,7 +660,5 @@ class 三步走 1.成员变量 2.成员函数 3.构造器</p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
     <script>anchors.add();</script>
   </body>
-
-  
 </html>
     

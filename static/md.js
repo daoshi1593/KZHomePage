@@ -76,40 +76,48 @@ async function updateBlog() {
 
       <body>
       <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const toc = document.getElementById('toc');
-      const ul = document.createElement('ul');
-      toc.appendChild(ul);
-      const headings = document.querySelectorAll('h1, h2, h3');
-      let currentList = ul;
-      headings.forEach(heading => {
-        const level = parseInt(heading.tagName.substring(1), 10);
-        const item = document.createElement('li');
-        item.classList.add('toc-item');
-        const link = document.createElement('a');
-        const dropdownBtn = document.createElement('span'); // 
-      
-        const id = heading.id || heading.textContent.trim().toLowerCase().replace(/\s+/g, '-');
-        heading.id = id; // 正确赋值
-        link.href = \`#${id}\`;
-        link.textContent = heading.textContent;
-        link.onclick = (e) => e.stopPropagation(); // 防止点击链接时触发父元素的点击事件
-        item.appendChild(link);
-        item.appendChild(dropdownBtn); // 将下拉按钮添加到目录项中
-        if (level === 3) { // 修改此处，直接创建三级标题的列表
-          if (!currentList.querySelector('ul')) {
-            const newList = document.createElement('ul');
-            currentList.appendChild(newList); // 修改此处，直接将新列表添加到当前列表项
-            currentList = newList;
-          }
-        } else {
-          currentList = ul; // 如果不是三级标题，重置currentList为最外层的ul
-        }
-        currentList.appendChild(item);
-      });
-      
-    });
-    </script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const toc = document.getElementById("toc");
+            const ul = document.createElement("ul");
+            toc.appendChild(ul);
+            const headings = document.querySelectorAll("h1, h2, h3");
+            let currentLevel = 1; // 初始层级设为1，对应h1
+            let currentUl = ul;
+
+            headings.forEach((heading, index) => {
+              const level = parseInt(heading.tagName.substring(1), 10);
+              const item = document.createElement("li");
+              const link = document.createElement("a");
+              const id = \`heading-$\{index}\`;
+
+              heading.id = id;
+              link.href = \`#$\{id}\`;
+              link.textContent = heading.textContent;
+              item.appendChild(link);
+
+              // 根据标题的层级调整或创建新的UL
+              while (level > currentLevel) {
+                const newUl = document.createElement("ul");
+                if (!currentUl.lastElementChild) {
+                  currentUl.appendChild(document.createElement("li"));
+                }
+                currentUl.lastElementChild.appendChild(newUl);
+                currentUl = newUl;
+                currentLevel++;
+              }
+              while (level < currentLevel && currentUl.parentNode !== toc) {
+                currentUl = currentUl.parentNode.closest("ul");
+                currentLevel--;
+              }
+
+              // 如果当前层级与目标层级相同，直接添加
+              if (level === currentLevel) {
+                currentUl.appendChild(item);
+              }
+            });
+          });
+        </script>
+      <div id="toc">目录</div>
         <div>${marked(data)}</div>
       </body>
 
