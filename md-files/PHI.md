@@ -1,14 +1,13 @@
 # PHI_plans
-- 8小时入门计算机课 上大学前已经学完
-- Missing Semesters 大一下已完成
-- cs106b 大一下+大一暑假
-- cs106L 大一暑假
+- 8小时入门计算机课 
+- Missing Semesters
+- cs106b
+- cs106L 
 - csapp / 6.006
 - 网络,编译原理
 - 15445 15418
 - cs162 6.046
 
-大一暑假:cs106b,cs106L,csapp
 
 
 
