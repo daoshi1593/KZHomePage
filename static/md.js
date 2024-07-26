@@ -45,6 +45,7 @@ async function updateBlog() {
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","headline":"${title}","url":"https://daoshi1593.github.io/md-files/cs106b_ALL.html"}</script>
 <!-- End Jekyll SEO tag -->
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
 
     <link rel="stylesheet" href="../static/blog.css">
     <link rel="stylesheet" href="../static/TOC.css">
@@ -136,8 +137,8 @@ async function updateBlog() {
     console.log('File updated:', title);
   }
 
-  
-  
+
+
 }
 async function blogchange() {
   const files = await readdir('../md-files');
@@ -146,34 +147,34 @@ async function blogchange() {
     const title = file.split('.')[0];
     items.add(title);
     // 为每个页面创建一个链接
-    
+
   }
-  for (const item of items){
+  for (const item of items) {
     html += `
     <dd>
       <a href="md-files/${item}.html">${item}</a>
       </dd>`;
   }
   console.log(items);
-// 读取blog.html的内容
-const blogData = await readFileAsync('../blog.html', 'utf8');
+  // 读取blog.html的内容
+  const blogData = await readFileAsync('../blog.html', 'utf8');
 
-// 找到标记的位置
-const startMarker = '<!-- start insert -->';
-const endMarker = '<!-- end insert -->';
-const startIndex = blogData.indexOf(startMarker);
-const endIndex = blogData.indexOf(endMarker);
-if (startIndex === -1 || endIndex === -1) {
-  throw new Error(`Marker not found in file: ${startMarker} or ${endMarker}`);
-}
+  // 找到标记的位置
+  const startMarker = '<!-- start insert -->';
+  const endMarker = '<!-- end insert -->';
+  const startIndex = blogData.indexOf(startMarker);
+  const endIndex = blogData.indexOf(endMarker);
+  if (startIndex === -1 || endIndex === -1) {
+    throw new Error(`Marker not found in file: ${startMarker} or ${endMarker}`);
+  }
 
-// 字符串插入
-console.log(html);
-const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex); 
+  // 字符串插入
+  console.log(html);
+  const newBlogData = blogData.slice(0, startIndex + startMarker.length) + html + blogData.slice(endIndex);
 
-// 将修改后的内容写回blog.html文件
-await writeFileAsync('../blog.html', newBlogData);
-console.log('Blog updated');
+  // 将修改后的内容写回blog.html文件
+  await writeFileAsync('../blog.html', newBlogData);
+  console.log('Blog updated');
 }
 
 
@@ -189,13 +190,13 @@ async function removeDuplicates() {
     console.log('Removing duplicates...');
     // 找到两个 marker 之间的所有 <dd> 模块
     let matches = content.match(/<!-- start insert -->(.*)<!-- end insert -->/s);
-    console.log('匹配区域'+ matches[1]+ '长度'+ matches[1].length);
+    console.log('匹配区域' + matches[1] + '长度' + matches[1].length);
     let dds = matches[0].match(/<dd>[\s\S]*?<\/dd>/g);
-    console.log('重复内容'+ dds);
+    console.log('重复内容' + dds);
     let uniqueDds = [...new Set(dds)];
-    console.log('唯一插入'+ uniqueDds);
+    console.log('唯一插入' + uniqueDds);
     let newContent = content.replace(/<!-- start insert -->(.*)<!-- end insert -->/s, '<!-- start insert -->\n' + uniqueDds.join('\n') + '\n<!-- end insert -->');
-    console.log('新内容'+ newContent+'长度'+ newContent.length);
+    console.log('新内容' + newContent + '长度' + newContent.length);
     // 将修改后的内容写回文件
     await writeFileAsync(path, newContent);
     console.log('Duplicates removed');
@@ -225,7 +226,7 @@ let items = new Set();
 async function ALL() {
   await updateBlog()
   await blogchange()
-  
+
 }
 
 ALL()
