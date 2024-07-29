@@ -102,7 +102,7 @@ function buildCommand(tasksConfig) {
 故曰此方法现在与直接输入命令行无异
 
 ### factor4:cmake与现代构建,meta_programing
-```cmake
+```
 # 设置CMake的最小版本要求
 cmake_minimum_required(VERSION 3.10)
 
@@ -128,10 +128,10 @@ add_executable(ComplexProject src/main.cpp src/utils.cpp)
 # 链接库文件
 target_link_libraries(ComplexProject boost_system boost_filesystem ssl crypto)
 ```
+
 此时我运行cmake配置,指定构建目录,完成cmake -> makefile的转变
-使用make,依靠makefile完成编译,make不生成命令行,只是在命令行环境执行预定义命令
-[^1]
+使用make,依靠makefile完成编译,make不生成命令行,只是在命令行环境执行预定义命令[^1]
 
 
 
-[^1]:2024.7.18写于HIT,由于所学甚少,难免产生错误,待学习计算机系统,编译原理,modern_cmake之后再来勘误
+[^1]:2024.7.18写,由于所学甚少,难免产生错误,待学习计算机系统,编译原理,modern_cmake之后再来勘误
