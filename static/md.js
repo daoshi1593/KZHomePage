@@ -1,145 +1,120 @@
 import express, { static as expressStatic } from 'express';
 import { readFile, writeFile, } from 'fs';
-import { watch } from 'chokidar';
 import { marked } from 'marked';
 import { join } from 'path';
 import { promisify } from 'util';
 import { readdir } from 'fs/promises';
+import { resolve } from 'path';
 const app = express();
 app.use(expressStatic('public')); // 用于提供静态文件，如CSS文件
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
-// 更新博客的函数
+
+// 读取文件夹下的所有文件，将每个文件的内容转换为HTML格式，然后将HTML内容写回文件夹
 async function updateBlog() {
-  const files = await readdir('../md-files');
-  let html = '';
-  for (const file of files) {
-    const data = await readFileAsync(join('../md-files', file), 'utf8');
-    const title = file.split('.')[0];
-    // 为每个页面创建一个链接
-    html += `
-    <dd>
-      <a href="md-files/${title}.html">${title}</a>
-      </dd>`;
-    // 记载每一个md文件内容,为每一个创建一个html页面在md-files文件夹下
-    const htmlData = `
+  try {
+    const dirPath = resolve('../md-files');
+    const files = await readdir(dirPath);
+    for (const file of files) {
+      if (file === 'graph_bed') {
+        continue;
+      }
+      const filePath = join(dirPath, file);
+      const data = await readFileAsync(filePath, 'utf8');
+      const title = file.split('.')[0];
+
+      // 记载每一个md文件内容,为每一个创建一个html页面在md-files文件夹下
+      const htmlData = `
 <!DOCTYPE html>
 <html lang="ch-cn">
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>${title} | daoshi1593</title>
-<meta name="generator" content="Jekyll v3.9.5" />
-<meta property="og:title" content="${title}" />
-<meta property="og:locale" content="en_US" />
-<link rel="canonical" href="https://daoshi1593.github.io/md-files/${title}.html" />
-<meta property="og:url" content="https://daoshi1593.github.io/md-files/${title}.html" />
-<meta property="og:site_name" content="daoshi1593" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="${title}" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","headline":"${title}","url":"https://daoshi1593.github.io/md-files/cs106b_ALL.html"}</script>
-<!-- End Jekyll SEO tag -->
-        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
-
+    <title>${title} | daoshi1593</title>
+    <meta name="generator" content="Jekyll v3.9.5" />
+    <meta property="og:title" content="${title}" />
+    <meta property="og:locale" content="en_US" />
+    <link rel="canonical" href="https://daoshi1593.github.io/md-files/${title}.html" />
+    <meta property="og:url" content="https://daoshi1593.github.io/md-files/${title}.html" />
+    <meta property="og:site_name" content="daoshi1593" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="twitter:title" content="${title}" />
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebPage","headline":"${title}","url":"https://daoshi1593.github.io/md-files/cs106b_ALL.html"}</script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
     <link rel="stylesheet" href="../static/blog.css">
     <link rel="stylesheet" href="../static/TOC.css">
-    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
-
-<!-- Setup Google Analytics -->
-
-
-
-<!-- You can set your favicon here -->
-<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
-
-<!-- end custom head snippets -->
-
   </head>
   <body>
     <div class="container-lg px-3 my-5 markdown-body">
-      
       <h1><a href="https://daoshi1593.github.io/">daoshi1593</a></h1>
       <div style=" display: flex;">
-        <h2>
-            <a href="https://daoshi1593.github.io/blog">Blog</a>
-        </h2>
-        <h2>
-            <a href="https://daoshi1593.github.io/cv">CV</a>
-        </h2>
+        <h2><a href="https://daoshi1593.github.io/blog">Blog</a></h2>
+        <h2><a href="https://daoshi1593.github.io/cv">CV</a></h2>
       </div>
-      
-
-      <body>
-      <script>
-          document.addEventListener("DOMContentLoaded", () => {
-            const toc = document.getElementById("toc");
-            const ul = document.createElement("ul");
-            toc.appendChild(ul);
-            const headings = document.querySelectorAll("h1, h2, h3");
-            let currentLevel = 1; // 初始层级设为1，对应h1
-            let currentUl = ul;
-
-            headings.forEach((heading, index) => {
-              const level = parseInt(heading.tagName.substring(1), 10);
-              const item = document.createElement("li");
-              const link = document.createElement("a");
-              const id = \`heading-$\{index}\`;
-
-              heading.id = id;
-              link.href = \`#$\{id}\`;
-              link.textContent = heading.textContent;
-              item.appendChild(link);
-
-              // 根据标题的层级调整或创建新的UL
-              while (level > currentLevel) {
-                const newUl = document.createElement("ul");
-                if (!currentUl.lastElementChild) {
-                  currentUl.appendChild(document.createElement("li"));
-                }
-                currentUl.lastElementChild.appendChild(newUl);
-                currentUl = newUl;
-                currentLevel++;
-              }
-              while (level < currentLevel && currentUl.parentNode !== toc) {
-                currentUl = currentUl.parentNode.closest("ul");
-                currentLevel--;
-              }
-
-              // 如果当前层级与目标层级相同，直接添加
-              if (level === currentLevel) {
-                currentUl.appendChild(item);
-              }
-            });
-          });
-        </script>
       <div id="toc">目录</div>
-        <div>${marked(data)}</div>
-      </body>
-
-      
+      <div>${marked(data)}</div>
       <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
         This site is open source. <a href="https://github.com/daoshi1593/daoshi1593.github.io/edit/main/md-files/${title}.md">Improve this page</a>.
       </div>
-      
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
     <script>anchors.add();</script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const toc = document.getElementById("toc");
+        const ul = document.createElement("ul");
+        toc.appendChild(ul);
+        const headings = document.querySelectorAll("h1, h2, h3");
+        let currentLevel = 1;
+        let currentUl = ul;
+
+        headings.forEach((heading, index) => {
+          const level = parseInt(heading.tagName.substring(1), 10);
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          const id = \`heading-$\{index}\`;
+
+          heading.id = id;
+          link.href = \`#$\{id}\`;
+          link.textContent = heading.textContent;
+          item.appendChild(link);
+
+          while (level > currentLevel) {
+            const newUl = document.createElement("ul");
+            if (!currentUl.lastElementChild) {
+              currentUl.appendChild(document.createElement("li"));
+            }
+            currentUl.lastElementChild.appendChild(newUl);
+            currentUl = newUl;
+            currentLevel++;
+          }
+          while (level < currentLevel && currentUl.parentNode !== toc) {
+            currentUl = currentUl.parentNode.closest("ul");
+            currentLevel--;
+          }
+
+          if (level === currentLevel) {
+            currentUl.appendChild(item);
+          }
+        });
+      });
+    </script>
   </body>
 </html>
-    `;
-    await writeFileAsync(join('../md-files', `${title}.html`), htmlData);
-    console.log('File updated:', title);
+      `;
+      await writeFileAsync(join(dirPath, `${title}.html`), htmlData);
+      console.log('File updated:', title);
+    }
+  } catch (error) {
+    console.error('Error updating blog:', error);
   }
-
-
-
 }
+
+// 更新blog.html文件，将所有页面链接插入到blog.html文件中
 async function blogchange() {
   const files = await readdir('../md-files');
   let html = '';
@@ -149,6 +124,7 @@ async function blogchange() {
     // 为每个页面创建一个链接
 
   }
+  items.delete('graph_bed')
   for (const item of items) {
     html += `
     <dd>
@@ -180,7 +156,7 @@ async function blogchange() {
 
 
 
-// 删除重复的函数
+// 删除重复的函数(暂时作废)
 async function removeDuplicates() {
   const path = '../blog.html';
 
