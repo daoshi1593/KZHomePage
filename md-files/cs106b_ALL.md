@@ -14,10 +14,85 @@ cs106b 里面有配套的 7 个 assignments 和 30 个 lecs,下面主要对他�
 ## 第二单元-assignment2(lec7-8)
 
 这里就开始了使用 ADT 的训练,最终目的就是完成最终的 BFS 的编写,利用队列,各种 ADT,完成一个海水漫灌的模型,顺带的也介绍了一些基本知识如 BIG o 表示法和如何优化算法,评估算法优劣
+>PROBLEM:Your task in this part of the assignment is to build a tool that models flooding due to sea level rise. To do so, we’re going to model terrains as grids of doubles, where each double represents the altitude of a particular square region on Earth. Higher values indicate higher elevations, while lower values indicate lower elevations. For example, take a look at the three grids to the right. Before moving on, take a minute to think over the following questions, which you don’t need to submit. Which picture represents a small hill? Which one represents a long, sloping incline? Which one represents a lowland area surrounded by levees?
+![flood-example1](../graph_bed/flood_example1.png)
+```cpp 
+Grid<bool> floodedRegionsIn(const Grid<double>& terrain,
+                            const Vector<GridLocation>& sources,double height)
+{
+    Grid<bool> AllMap(terrain.numRows(),terrain.numCols(),false);
 
+    Grid<bool> &AllMaps=AllMap;
+
+    Set<GridLocation> late;
+    if (sources.isEmpty())
+    {
+        return AllMaps;
+    }
+    Queue<GridLocation> AllMatters;
+
+    for (GridLocation i:sources)
+    {
+        if (terrain[i.row][i.col]<=height)
+        {
+            AllMaps[i.row][i.col]=true;
+            AllMatters.enqueue(i);
+            late.add(i);
+        }
+
+    }
+    //BFS
+    //ALlmatters一直变化,直到为空
+    while (!AllMatters.isEmpty())
+    {
+        //随便选一个
+        GridLocation cur=AllMatters.dequeue();
+        //走两步
+        for (int i=cur.col-1;i<=cur.col+1;i+=2)
+        {
+            //操作
+            if (i<0||i>=terrain.numCols())
+            {
+                continue;
+            }
+            //符合条件,压栈
+            if (terrain[cur.row][i]<=height)
+            {
+                AllMaps[cur.row][i]=true;
+                GridLocation j={cur.row,i};
+                if (!late.contains(j))
+                {
+                    late.add(j);
+                    AllMatters.enqueue(j);
+                }
+
+            }
+        }
+        for (int i=cur.row-1;i<=cur.row+1;i+=2)
+        {
+            if (i<0||i>=terrain.numRows())
+            {
+                continue;
+            }
+            if (terrain[i][cur.col]<=height)
+            {
+                AllMaps[i][cur.col]=true;
+                GridLocation j={i,cur.col};
+                if (!late.contains(j))
+                {
+                    late.add(j);
+                    AllMatters.enqueue(j);
+                }
+            }
+        }
+    }
+    return AllMaps;
+}
+
+```
 ## 第三单元-assignment3,assignment4(lec10-14)
 
-这里就开始了递归的训练,先讲基本的递归思想,例子,然后 assignment 要求实现 BFS 的一系列递归问题(难)
+这里就开始了递归的训练,先讲基本的递归思想,例子,然后 assignment 要求实现 DFS 的一系列递归问题(难)
 在编写递归算法的基础上还要求掌握优化方法(记忆),便面不必须的开支
 **这里就需要做一个总结了,DFS 和 BFS 的大总结**
 **对于 DFS 来说**
@@ -633,7 +708,7 @@ bool canBeMadeDisasterReady(const Map<string, Set<string>>& roadNetwork,
 }
 ```
 #### Big-O,merge sort
-![BIg-O,merge sort](../graph_bed/merge_sort_BIG_O.png)
+![BIg-O,merge_sort](../graph_bed/merge_sort_BIG_O.png)
 ```cpp
 Vector<DataPoint> combineTwo(Vector<DataPoint>A,Vector<DataPoint>B){
     Vector<DataPoint> C = {} ;
@@ -1204,7 +1279,7 @@ Map<string, int> apportion(const Map<string, int>& populations, int numSeats) {
 }
 
 ```
-超时,重写,很简单,我们打入倒数
+超时,重写,很简单,我们打入倒数(所以cs中返回最的函数必然既能最大值也能返回最小值,只需颠倒)
 ```cpp
 Map<string, int> apportion(const Map<string, int>& populations, int numSeats) {
     if (populations.size()>numSeats){
@@ -1243,5 +1318,561 @@ Map<string, int> apportion(const Map<string, int>& populations, int numSeats) {
 }
 ```
 完美通过
-## 第五单元-links 
+## 第五单元-links and some real world algorithms
 * 链表
+* bitnary search trees
+* huffman code 
+* hashing
+
+
+### Huffman encodding
+**provably minimal encoding** 
+**PROBLEM**:通过编码的方式压缩信息(01),如何压缩到最小情况
+一些显而易见的事实
+* 出现最多的信息应该用最短的编码
+* 出现最少的信息应该用最长的编码
+* 关键点:如何确定频率和编码之间的关系
+    思考1:先编码低频,再编码高频,遵循prefix 原则,所以用到的是优先级队列
+    思考2:如何确定优先级的分配呢?
+
+**Huffman code example**
+code for KIDR'S 
+![Huffman code example](../graph_bed/Huffman_example1.png)
+
+
+### hashing 
+hashing: **一个单射函数**
+**PROBLEM** :如何使ADT达到比O(logn)更快的效果?
+* 利用hashing fn 生成hashing value
+* 创造桶(bucket),根据hashing value对应桶,把元素存入桶中
+* 读取时,同样根据hashing value 读取元素所在的桶,然后在这个桶里面寻找元素
+* a hashing collision is about one bucket holding two elements'
+* we use chaining to solve collision,storing elements in links in a bucket (a hashing node)
+![hashing_load_factor](../graph_bed/hashing_load_factor1.png)
+其中n是总元素,b是桶数量,idl(insertion,delegate,lookup)复杂度 O(1+n/b) 
+* if `\alpha > c`, then rehash(resize the num of buckets to make alpha constrained)
+* hashing also is used in encryption
+
+**一种较为基本简单的线性探测哈希设计,不包含rehash**
+```cpp 
+class LinearProbingHashTable {
+public:
+    //构造函数
+    LinearProbingHashTable(HashFunction<std::string> hashFn);
+    //析构函数
+    ~LinearProbingHashTable();
+    //判空,O(1)复杂度
+    bool isEmpty() const;
+    //返回已存入元素数量,O(1)
+    int size() const;
+    //插入
+    bool insert(const std::string& key);
+    //判含
+    bool contains(const std::string& key) const;
+    //删除
+    bool remove(const std::string& key);
+
+private:
+    //slot的三种状态
+    enum class SlotType {
+        EMPTY, FILLED, TOMBSTONE
+    };
+    //slot构造
+    struct Slot {
+        std::string value;
+        SlotType type;
+    };
+    //slot指针
+    Slot* elems = nullptr;
+    //已存入元素
+    int numelems ;
+    //一个linerprobinghash的hash函数
+    HashFunction<std::string> hashFn;
+    //容量
+    int capacity ;
+};
+```
+具体实现:
+```cpp 
+LinearProbingHashTable::LinearProbingHashTable(HashFunction<string> hashFn) {
+    //存入hash函数
+    this->hashFn = hashFn ;
+    //记录本次容量
+    capacity = hashFn.numSlots() ;
+    //分配内存
+    elems = new Slot[capacity] ;
+    //初始化
+    for (int i=0 ;i < capacity ;i++){
+        elems[i].type = SlotType::EMPTY ;
+        elems[i].value = "" ;
+    }
+    numelems = 0;
+}
+
+LinearProbingHashTable::~LinearProbingHashTable() {
+    //释放内存
+    delete []elems ;
+}
+
+int LinearProbingHashTable::size() const {
+    //直接返回记录值
+    return numelems ;
+}
+
+bool LinearProbingHashTable::isEmpty() const {
+    //依托于记录值判空
+    if (numelems == 0){
+        return true ;
+    }else {
+        return false ;
+    }
+}
+
+/*理论上,remove改进情况下,应该只有两种状态,empty和filled,稍作修改条件即可*/
+bool LinearProbingHashTable::insert(const string& elem) {
+    //拒绝重复插入
+    if (LinearProbingHashTable::contains(elem)){
+        return false ;
+    }
+    //获得哈希值
+    int elemhashValue = hashFn(elem) ;
+    //得到index
+    int index = elemhashValue % capacity ;
+    //制作副本,让指针只跑一个周期
+    int indexcopy = index;
+    //得到指针
+    Slot* cur = &elems[index] ;
+    //获得非filled位置的指针
+    while (cur->type == SlotType::FILLED){
+        //如果达到边界,环形数组,或者index++
+        if (index == capacity - 1){
+            index = 0;
+        }else {
+            index++ ;
+        }
+        //如果跑完一圈,false
+        if (index == indexcopy){
+            return false ;
+        }
+        //后置的获取指针
+        cur = &elems[index] ;
+    }
+    //在empty位置插入
+    cur->value = elem ;
+    cur->type = SlotType::FILLED ;
+    numelems++;
+    return true ;
+}
+/*理论上,remove改进情况下,应该只有两种状态,empty和filled,稍作修改条件即可*/
+bool LinearProbingHashTable::contains(const string& elem) const {
+    //获得哈希值
+    int elemhashValue = hashFn(elem) ;
+    //获得index
+    int index = elemhashValue % capacity ;
+    //获得指针
+    Slot* cur = &elems[index] ;
+    //获得index副本
+    int indexcopy = index ;
+    //在有值区域移动,最后得到empty位置指针
+    while (cur->type !=SlotType::EMPTY){
+        //如果有值且被填充
+        if (cur->value == elem&&cur->type == SlotType::FILLED){
+            return true ;
+        }
+        //边界
+        if (index == capacity - 1){
+            index = 0;
+        }else {
+            index ++ ;
+        }
+        //跑一圈
+        if (index == indexcopy){
+            return false ;
+        }
+        //后置获取指针
+        cur = &elems[index] ;
+    }
+    return false  ;
+}
+/*实际上remove可以改进,不需要第三种标记状态,在remove后直接rehash*/
+bool LinearProbingHashTable::remove(const string& elem) {
+    //获取hash值
+    int elemhashValue = hashFn(elem) ;
+    //获取index
+    int index = elemhashValue % capacity ;
+    //获取指针
+    Slot* cur = &elems[index] ;
+    //获取index副本
+    int indexcopy = index ;
+    //在非空区域移动
+    while (cur->type != SlotType::EMPTY){
+        //如果是被删除区域
+        if (cur->type == SlotType::TOMBSTONE){
+            //环形数组的边界
+            if (index == capacity - 1){
+                index = 0 ;
+            }else {
+                index++ ;
+            }
+            //跑一圈
+            if (index == indexcopy){
+                return false;
+            }
+            //后置获取指针
+            cur = &elems[index];
+            continue ;
+        }
+        //找到remove目标
+        if (cur->value == elem){
+            cur->type = SlotType::TOMBSTONE ;
+            numelems-- ;
+            return true ;
+        }else {
+            if (index == capacity - 1){
+                index = 0 ;
+            }else {
+                index ++ ;
+            }
+            if (index == indexcopy){
+                return false;
+            }
+            cur = &elems[index];
+        }
+    }
+    return false ;
+}
+```
+**改进方案**
+* 只需要两种状态
+* remove之后直接rehash(将原来的元素全部重新打入新table)
+* 应该有自动扩大内存功能
+* functions: rehash,expand
+* key points:copy all elems
+**liner probing hashing:a collision resolution**
+
+**一种较为简单的Robin hash**
+* Each element in a Robin Hood hash table is annotated with the distance it is from its home slot. This distance is measured by the number of steps backwards you have to take, starting at that element, to get the index of its home slot. (As in linear probing, we wrap around the ends of the table if we reach that point.)
+* Lookups in a Robin Hood hash table can stop early. Specifically, if the element we’re looking for is further from home than the currently-scanned table element, we know that the element we’re looking for isn’t in the table and can stop our search. 
+* When inserting an element into a Robin Hood hash table, if the element being inserted is further from home than the element in the table slot being scanned, we displace the element in the table at that index, place the element we wanted to insert there, then continue onward as if we were inserting the displaced element all along. (We do not do anything if the distances are tied.)
+* There are no tombstones in a Robin Hood hash table. Instead, when deleting an element, we use backwards-shift deletion: we shift elements back one spot in the table until we either (1) find an empty slot or (2) find an element in its natural home spot.
+
+**.h**
+```cpp 
+class RobinHoodHashTable {
+public:
+    //构造函数
+    RobinHoodHashTable(HashFunction<std::string> hashFn);
+    //析构
+    ~RobinHoodHashTable();
+    //判空
+    bool isEmpty() const;
+    //数数
+    int size() const;
+    //插入,使用Robin设计
+    bool insert(const std::string& key);
+    //判含,使用Robin设计
+    bool contains(const std::string& key) const;
+    //移除,使用shift-back法
+    bool remove(const std::string& key);
+
+//    void printDebugInfo() const;
+
+private:
+   //插槽
+    struct Slot {
+        std::string value;
+        int distance;
+    };
+    //空
+    static const int EMPTY_SLOT = -137;
+    //元素数量
+    int numelems ;
+    //容量
+    int capacity ;
+    //内置hash函数
+    HashFunction<std::string> hashFn ;
+    //插槽指针
+    Slot* elems = nullptr;
+
+
+
+    //辅助内容
+    /* Internal shenanigans to make this play well with C++. */
+    DISALLOW_COPYING_OF(RobinHoodHashTable);
+    ALLOW_TEST_ACCESS();
+    MAKE_PRINTERS_FOR(Slot);
+    MAKE_COMPARATORS_FOR(Slot);
+};
+```
+**实现**
+```cpp 
+//构造函数
+RobinHoodHashTable::RobinHoodHashTable(HashFunction<string> hashFn) {
+    //存入构造函数
+    this->hashFn = hashFn ;
+    //
+    capasity = hashFn.numSlots() ;
+    //
+    elems = new Slot[capasity] ;
+    //初始化
+    for (int i=0 ;i < capasity ;i++){
+        elems[i].distance = EMPTY_SLOT ;
+        elems[i].value = "" ;
+    }
+    numelems = 0;
+}
+
+RobinHoodHashTable::~RobinHoodHashTable() {
+    delete[] elems ;
+}
+
+int RobinHoodHashTable::size() const {
+    return numelems ;
+}
+
+bool RobinHoodHashTable::isEmpty() const {
+    if (numelems == 0){
+        return true ;
+    }
+    else {
+        return false ;
+    }
+}
+
+bool RobinHoodHashTable::insert(const string& elem) {
+    //获取index
+    int elemhashValue = hashFn(elem) ;
+    int index = elemhashValue % capasity ;
+
+    //记录插入组
+    Slot *totakein =nullptr ;
+    totakein = new Slot[1] ;
+    totakein->distance = 0;
+    totakein->value = elem;
+
+    //判含
+    Slot* cur = &elems[index];
+    int indexcopy = index ;
+    int step = 0 ;
+    while (cur->distance >= 0) {
+        if (step > cur->distance){
+            break ;
+        }
+        if (cur->value == elem) {
+            delete[] totakein ;
+            return false ;
+        }
+        //环型数组
+        index = (index + 1) % capasity;
+        //跑一圈
+        if (index == indexcopy){
+            break ;
+        }
+        cur = &elems[index];
+        step++;
+    }
+    //重置index
+    index = indexcopy ;
+    cur = &elems[index];
+    //开始插入
+    while(totakein->distance >= 0){
+        //如果满了就pruning
+        if (RobinHoodHashTable::numelems == capasity){
+            delete []totakein ;
+            return false ;
+        }
+        //如果满足Robin
+        if (totakein->distance > cur->distance){
+            swap(cur->distance,totakein->distance);
+            swap(cur->value,totakein->value);
+            totakein->distance++;
+        }else {
+            totakein->distance++;
+        }
+        //环形数组
+        index = (index+1) % capasity ;
+        cur = & elems[index] ;
+    }
+    //插入成功
+    numelems++;
+    delete[]totakein ;
+    return true ;
+}
+
+bool RobinHoodHashTable::contains(const string& elem) const {
+    //获取初值
+    int elemhashValue = hashFn(elem) ;
+    int index = elemhashValue % capasity ;
+    Slot* cur = &elems[index] ;
+    
+    int indexcopy = index ;
+    int step = 0 ;
+    //判含
+    while (cur->distance >= 0) {
+        //Robin法则
+        if (step > cur->distance){
+            return false ;
+        }
+        if (cur->value == elem) {
+            return true ;
+        }
+        //环形数组
+        index = (index + 1) % capasity;
+        if (index == indexcopy){
+            return false ;
+        }
+        cur = &elems[index];
+        step++;
+    }
+    return false ;
+}
+
+bool RobinHoodHashTable::remove(const string& elem) {
+    //获取初值
+    int elemhashValue = hashFn(elem) ;
+    int index = elemhashValue % capasity ;
+    Slot* cur = &elems[index] ;
+    int step = 0;
+
+    // 找到位置,用contain更加方便,但是回重复计算hash
+    int indexcopy = index ;
+    while (cur->distance >= 0) {
+        if (step > cur->distance){
+            return false ;
+        }
+        if (cur->value == elem) {
+            goto label ;
+        }
+        index = (index + 1) % capasity;
+        if (index == indexcopy){
+            return false ;
+        }
+        cur = &elems[index];
+        step++;
+    }
+    return false ;
+
+    label:
+    // 已经找到正确的 cur
+    Slot* prev = cur;
+    index = (index + 1) % capasity;
+    cur = &elems[index];
+
+    while (true) {
+        if (cur->distance <= 0) {
+            prev->distance = EMPTY_SLOT;
+            break;
+        }
+        //shift-back delete
+        prev->distance = cur->distance - 1;
+        prev->value = cur->value;
+
+        // 更新 prev 和 index
+        prev = cur;
+        index = (index + 1) % capasity;
+        cur = &elems[index];
+    }
+    //成功删除
+    numelems--;
+    return true;
+}
+```
+* 环形数组
+* Robin设计
+* 复现能力
+### CRUD for links
+**lookup in links**
+```cpp 
+Nucleotide* findFirst(Nucleotide* dna, Nucleotide* target) {
+    if (target == nullptr) {
+        return dna;
+    }
+    Nucleotide* headt = target;
+    while (dna != nullptr) {
+        if (dna->value == headt->value) {
+            Nucleotide* ans = dna;
+            Nucleotide* tempDna = dna;
+            Nucleotide* tempTarget = target;
+            while (tempTarget != nullptr && tempDna != nullptr) {
+                if (tempDna->value != tempTarget->value) {
+                    break;
+                }
+                tempDna = tempDna->next;
+                tempTarget = tempTarget->next;
+            }
+            if (tempTarget == nullptr) {
+                return ans;
+            }
+        }
+        dna = dna->next;
+    }
+    return nullptr;
+}
+```
+**change in links**
+```cpp 
+bool spliceFirst(Nucleotide*& dna, Nucleotide* target) {
+    if (target == nullptr) {
+        return true;
+    }
+
+    Nucleotide* match = findFirst(dna, target);
+    if (match == nullptr) {
+        return false;
+    }
+
+    Nucleotide* prev = nullptr;
+    Nucleotide* current = dna;
+    while (current != match) {
+        prev = current;
+        current = current->next;
+    }
+
+    Nucleotide* tempTarget = target;
+    //双切操作,一个prev,一个cur,prev标记一个断口,cur移动到另一个,删完了以后两个链接
+    while (tempTarget != nullptr && current != nullptr) {
+        //cur待删除
+        Nucleotide* toDelete = current;
+        //cur指向下一个了
+        current = current->next;
+        tempTarget = tempTarget->next;
+        delete toDelete;
+    }
+    //布线
+    if (prev == nullptr) {
+        if (current == nullptr){
+            dna = nullptr ;
+        }else {
+            dna = current ;
+            dna->prev = prev;
+        }
+    } else {
+        if (current == nullptr){
+            prev->next = current ;
+        }else {
+            prev->next = current ;
+            current->prev = prev ;
+        }
+    }
+    return true;
+}
+```
+### graph algorithms
+* dijkstra 
+* A*:heuristic
+## 第六单元-multiple threads and parallel computing
+### threads
+>Although we normally think of a process as having a single control flow, in modern systems a process can actually consist of multiple execution units, called threads, each running in the context of the process and sharing the same code and global data. Threads are an increasingly important programming model because of the requirement for concurrency in network servers, because it is easier to share data between multiple threads than between multiple processes, and because threads are typically more efficient than processes. Multi-threading is also one way to make programs run faster when multiple processors are available...
+
+A thread is based on a function, we use multiple threads to solve CPU intensive problems.
+
+
+
+
+
+---
+**end**
+![cs106b_end](../graph_bed/cs106b_end1.png)
+![cs106b_end2](../graph_bed/cs106b_end2.png)
+![cs106b_end3](../graph_bed/cs106b_end3.png)
+>CS is more than just programming, these skills will make you better at whatever you choose to do in life.
