@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="ch-cn">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>cs106L_ALL | daoshi1593</title>
+    <meta name="generator" content="Jekyll v3.9.5" />
+    <meta property="og:title" content="cs106L_ALL" />
+    <meta property="og:locale" content="en_US" />
+    <link rel="canonical" href="https://daoshi1593.github.io/md-files/cs106L_ALL.html" />
+    <meta property="og:url" content="https://daoshi1593.github.io/md-files/cs106L_ALL.html" />
+    <meta property="og:site_name" content="daoshi1593" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="twitter:title" content="cs106L_ALL" />
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebPage","headline":"cs106L_ALL","url":"https://daoshi1593.github.io/md-files/cs106b_ALL.html"}</script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+    <link rel="stylesheet" href="../static/blog.css">
+    <link rel="stylesheet" href="../static/TOC.css">
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      <h1><a href="https://daoshi1593.github.io/">daoshi1593</a></h1>
+      <div style=" display: flex;">
+        <h2><a href="https://daoshi1593.github.io/blog">Blog</a></h2>
+        <h2><a href="https://daoshi1593.github.io/cv">CV</a></h2>
+      </div>
+      <div id="toc">目录</div>
+      <div><h1>cs106L的相关学习</h1>
+</div>
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="https://github.com/daoshi1593/daoshi1593.github.io/edit/main/md-files/cs106L_ALL.md">Improve this page</a>.
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const toc = document.getElementById("toc");
+        const ul = document.createElement("ul");
+        toc.appendChild(ul);
+        const headings = document.querySelectorAll("h1, h2, h3");
+        let currentLevel = 1;
+        let currentUl = ul;
+
+        headings.forEach((heading, index) => {
+          const level = parseInt(heading.tagName.substring(1), 10);
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          const id = `heading-${index}`;
+
+          heading.id = id;
+          link.href = `#${id}`;
+          link.textContent = heading.textContent;
+          item.appendChild(link);
+
+          while (level > currentLevel) {
+            const newUl = document.createElement("ul");
+            if (!currentUl.lastElementChild) {
+              currentUl.appendChild(document.createElement("li"));
+            }
+            currentUl.lastElementChild.appendChild(newUl);
+            currentUl = newUl;
+            currentLevel++;
+          }
+          while (level < currentLevel && currentUl.parentNode !== toc) {
+            currentUl = currentUl.parentNode.closest("ul");
+            currentLevel--;
+          }
+
+          if (level === currentLevel) {
+            currentUl.appendChild(item);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+      

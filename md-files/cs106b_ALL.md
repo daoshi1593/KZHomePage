@@ -1338,7 +1338,278 @@ Map<string, int> apportion(const Map<string, int>& populations, int numSeats) {
 **Huffman code example**
 code for KIDR'S 
 ![Huffman code example](../graph_bed/Huffman_example1.png)
+**huffman code .cpp**
+```cpp 
+//准备,数据结构
+#include "Huffman.h"
+using namespace std;
 
+//内存回收,递归实现
+void deleteTree(EncodingTreeNode* tree) {
+    if (tree!=nullptr) {
+        deleteTree(tree->zero);
+        deleteTree(tree->one);
+        delete tree;
+    }else {
+        return ;
+    }
+}
+/*  
+输入:str
+输出:Huffman tree
+*/
+EncodingTreeNode* huffmanTreeFor(const string& str) {
+    //空字符串报错
+    if (str.size() == 0){
+        error("s" ) ;
+    }
+    //优先级队列
+    PriorityQueue<EncodingTreeNode*> pq;
+    Map<char ,int> prioritys ;
+    //字典
+    for (char A:str){
+        prioritys.put(A,0) ;
+    }
+    for (char A:str){
+        prioritys[A]++;
+    }
+    //如果只有一个节点,报错
+    if (prioritys.size() == 1){
+        error ("s") ;
+    }
+    //打入优先级队列
+    for (char A:prioritys){
+        EncodingTreeNode* ans = new EncodingTreeNode[1];
+        ans->ch = A ;
+        ans->one = nullptr ;
+        ans->zero = nullptr ;
+        pq.enqueue(ans,prioritys.get(A)) ;
+    }
+    //头节点
+    EncodingTreeNode* head = nullptr ;
+    while(pq.size() > 1){
+
+        EncodingTreeNode* current1 = pq.dequeue();
+        EncodingTreeNode* current2 = pq.dequeue();
+        int value1 = prioritys.get(current1->ch) ;
+        int value2 = prioritys.get(current2->ch) ;
+
+
+        //current 12
+        EncodingTreeNode *head12 = new EncodingTreeNode[1] ;
+        head12->zero = current1 ;
+        head12->one = current2 ;
+        head12->ch = current1->ch ;
+
+        head = head12 ;
+        pq.enqueue(head12,value1 + value2) ;
+    }
+
+    return head ;
+}
+/*
+输入:Huffman tree,解码队列bits
+输出:解码结果str
+*/
+string decodeText(Queue<Bit>& bits, EncodingTreeNode* tree) {
+    string ans ;
+    EncodingTreeNode* temptree = tree ;
+    if (temptree == nullptr){
+        error("s") ;
+    }
+    //当bits不为空的时候保持搜索,0对应左,1对应右,触底则记录得到的char,加入ans
+    while(bits.size() > 0){
+        if (temptree->zero!=nullptr && temptree->one!=nullptr){
+            Bit cur = bits.dequeue() ;
+            //
+            if (cur == 0){
+                temptree = temptree->zero ;
+            }
+            //
+            if (cur == 1){
+                temptree = temptree->one ;
+            }
+            continue ;
+        }else {
+            ans = ans + temptree->ch ;
+            temptree = tree;
+        }
+    }
+    //最后一个要补
+    ans = ans + temptree->ch ;
+    return ans ;
+}
+/*
+输入:待寻找的char A,已有的Huffman tree
+输出:A对应的路径
+*/
+
+Queue<Bit> encodeText(const string& str, EncodingTreeNode* tree) {
+    Queue<Bit> ans ;
+    //一个一个搜索
+    for (char A:str){
+        Queue<Bit> path ;
+        path = encodeTexthelper(A,tree,path) ;
+        while (path.size()> 0){
+            Bit S = path.dequeue() ;
+            ans.enqueue(S) ;
+        }
+    }
+    return ans ;
+}
+
+Queue<Bit> encodeTexthelper(char &A, EncodingTreeNode* tree,Queue<Bit> path) {
+    //base lines
+    if (tree->one == nullptr){
+        //触底返回已有路径
+        if (tree->ch == A){
+            return path ;
+        }else {
+            return  {};
+        }
+    }
+    //分叉成两条路
+    Queue<Bit> path1 = path ;
+
+    Queue<Bit> path2 = path ;
+
+    path1.enqueue(0) ;
+    path2.enqueue(1) ;
+    //走
+    Queue<Bit> ans1 = encodeTexthelper(A,tree->zero,path1) ;
+    Queue<Bit> ans2 = encodeTexthelper(A,tree->one,path2) ;
+    //返回合法的路径
+    if (ans1.size()>0){
+        return ans1;
+    }else {
+        return ans2 ;
+    }
+}
+
+EncodingTreeNode* decodeTree(Queue<Bit>& bits, Queue<char>& leaves) {
+    //直接使用helper
+    EncodingTreeNode* head = decodeTreehelper(bits,leaves);
+
+    return head ;
+}
+/*
+    输入:树的形状和叶子
+    输出:树节点
+    思路:分割bits队列,使得原问题转化为两个树的生成问题
+*/
+EncodingTreeNode* decodeTreehelper(Queue<Bit>& bits, Queue<char>& leaves) {
+    Bit cur = bits.dequeue();
+    EncodingTreeNode* head ;
+    //第一节点
+    if (cur == 1){
+        EncodingTreeNode* head12 = new EncodingTreeNode[1] ;
+        int exceptvalue = 1;
+        //待分割
+        Queue<Bit> bits1;
+        Queue<Bit> bits2 ;
+        //分割算法
+        int realget = 0;
+        head = head12 ;
+        while(exceptvalue > realget){
+                Bit cur = bits.dequeue();
+                if (cur == 1 ){
+                        exceptvalue = exceptvalue +1;
+                        bits1.enqueue(cur) ;
+                }
+                if (cur == 0){
+                    bits1.enqueue(cur) ;
+                    realget++;
+                }
+        }
+        //已经得到bits1,下面得到bits2
+        while(!bits.isEmpty()){
+            Bit cur = bits.dequeue();
+            bits2.enqueue(cur) ;
+        }
+        //分割成功,使用递归
+        head12->zero = decodeTreehelper(bits1,leaves);
+        head12->one = decodeTreehelper(bits2,leaves);
+    }else {
+        //如果第一节点就是叶子
+        EncodingTreeNode* tree1 = new EncodingTreeNode[1] ;
+        tree1->ch = leaves.dequeue() ;
+        tree1->zero = nullptr ;
+        tree1->one = nullptr ;
+        return tree1 ;
+    }
+
+    return head ;
+}
+/*
+    输入:Huffman树
+    输出:无
+    改变参数:树的形状队列和叶子内容(char)
+
+*/
+void encodeTree(EncodingTreeNode* tree, Queue<Bit>& bits, Queue<char>& leaves) {
+    encodeTreehelper(tree,bits,leaves) ;
+}
+//helper
+void encodeTreehelper(EncodingTreeNode* tree,
+                      Queue<Bit>& bits,
+                      Queue<char>& leaves){
+    //把记录一个树的形状和叶子的问题转化为记录两个子树的问题
+    if (tree->one == nullptr){
+        //开局就是叶子
+        leaves.enqueue(tree->ch) ;
+        bits.enqueue(0);
+    }else {
+        bits.enqueue(1);
+        encodeTreehelper(tree->zero,bits,leaves) ;
+        encodeTreehelper(tree->one,bits,leaves) ;
+    }
+}
+//综合函数,压缩
+HuffmanResult compress(const string& text) {
+    //输入合法性检验
+    if (text.size() <= 1){
+        error("S") ;
+    }
+    char testcopy = text.at(0) ;
+    char test;
+
+    for (int i=1;i<text.size();i++){
+        test = text.at(i);
+        if (test != testcopy){
+            goto labhea ;
+        }
+    }
+    error("S") ;
+labhea :
+    //Huffman结果
+    HuffmanResult ans;
+
+    EncodingTreeNode *head = huffmanTreeFor(text) ;
+    //结果的三个部分
+    Queue<Bit> ansbits ;
+    Queue<char> anstreeleaves;
+    Queue<Bit> ansmessageBits;
+    //填入答案
+    encodeTree(head,ansbits,anstreeleaves);
+    ansmessageBits = encodeText(text,head) ;
+
+    ans.messageBits = ansmessageBits;
+    ans.treeBits = ansbits;
+    ans.treeLeaves = anstreeleaves ;
+    //释放内存
+    deleteTree(head) ;
+
+    return ans;
+
+}
+//解压
+string decompress(HuffmanResult& file) {
+    EncodingTreeNode* head = decodeTree(file.treeBits,file.treeLeaves);
+    string ans = decodeText(file.messageBits,head);
+    deleteTree(head) ;
+    return ans ;
+}
+```
 
 ### hashing 
 hashing: **一个单射函数**
