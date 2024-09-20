@@ -30,6 +30,141 @@
       </div>
       <div id="toc">目录</div>
       <div><h1>cs106L的相关学习</h1>
+<h2>Initialization &amp; References</h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+void print_vector(const std::vector&lt;int&gt;&amp; vec) {
+    for (const int&amp; elem : vec) {
+        std::cout &lt;&lt; elem &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+int main() {
+    // 初始化示例
+    int a(10); // 直接初始化
+    int b = 20; // 拷贝初始化
+    int c{30}; // 列表初始化
+
+    std::vector&lt;int&gt; vec = {1, 2, 3, 4, 5}; // 列表初始化
+
+    // 引用示例
+    int x = 100;
+    int&amp; lref = x; // 左值引用
+    lref = 200; // 修改 lref 也会修改 x
+
+    int&amp;&amp; rref = 300; // 右值引用
+    rref = 400; // 修改 rref
+
+    // 打印结果
+    std::cout &lt;&lt; &quot;a: &quot; &lt;&lt; a &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;b: &quot; &lt;&lt; b &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;c: &quot; &lt;&lt; c &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;x: &quot; &lt;&lt; x &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;rref: &quot; &lt;&lt; rref &lt;&lt; std::endl;
+
+    print_vector(vec);
+
+    return 0;
+}
+</code></pre>
+<h2>Streams</h2>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;sstream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+// 从控制台读取用户输入，并将其写入文件
+void writeToFile(const std::string&amp; filename) {
+    std::ofstream outfile(filename);
+    if (!outfile.is_open()) {
+        std::cerr &lt;&lt; &quot;Unable to open file for writing.&quot; &lt;&lt; std::endl;
+        return;
+    }
+
+    std::string input;
+    std::cout &lt;&lt; &quot;Enter some text (type &#39;exit&#39; to finish):&quot; &lt;&lt; std::endl;
+    while (true) {
+        std::getline(std::cin, input);
+        if (input == &quot;exit&quot;) break;
+        outfile &lt;&lt; input &lt;&lt; std::endl;
+    }
+
+    outfile.close();
+}
+
+// 从文件读取数据，并将其存储到字符串流中
+std::string readFromFile(const std::string&amp; filename) {
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        std::cerr &lt;&lt; &quot;Unable to open file for reading.&quot; &lt;&lt; std::endl;
+        return &quot;&quot;;
+    }
+
+    std::ostringstream oss;
+    std::string line;
+    while (std::getline(infile, line)) {
+        oss &lt;&lt; line &lt;&lt; std::endl;
+    }
+
+    infile.close();
+    return oss.str();
+}
+
+// 处理字符串流中的数据
+std::vector&lt;std::string&gt; processStringStream(const std::string&amp; data) {
+    std::istringstream iss(data);
+    std::vector&lt;std::string&gt; words;
+    std::string word;
+
+    while (iss &gt;&gt; word) {
+        words.push_back(word);
+    }
+
+    return words;
+}
+
+int main() {
+    const std::string filename = &quot;example.txt&quot;;
+
+    // 从控制台读取用户输入，并将其写入文件
+    writeToFile(filename);
+
+    // 从文件读取数据，并将其存储到字符串流中
+    std::string fileData = readFromFile(filename);
+
+    // 处理字符串流中的数据
+    std::vector&lt;std::string&gt; words = processStringStream(fileData);
+
+    // 输出处理结果
+    std::cout &lt;&lt; &quot;Words in the file:&quot; &lt;&lt; std::endl;
+    for (const std::string&amp; word : words) {
+        std::cout &lt;&lt; word &lt;&lt; std::endl;
+    }
+
+    return 0;
+}
+</code></pre>
+<h2>Iterators and Pointers</h2>
+<h2>Introduction to classes</h2>
+<h2>Container adapters</h2>
+<h2>InheritancePlan</h2>
+<h2>Template classes</h2>
+<h2>Const correctnessPlan</h2>
+<h2>Template Functions</h2>
+<h2>Template metaprogramming</h2>
+<h2>Introduction to Algorithms</h2>
+<h2>Functions and Lambdas</h2>
+<h2>Operators and Operator Overloading</h2>
+<h2>SMFS</h2>
+<h2>Rule of Zero, Three, and Five</h2>
+<h2>std::optional</h2>
+<h2>RAII</h2>
+<p><strong>RAII: Resource Acquisition is Initialization</strong>
+RALL for 2 things, locks and memory
+<a href="https://en.cppreference.com/w/cpp/thread/lock_guard#:~:text=The%20class%20lock_guard%20is%20a,the%20mutex%20it%20is%20given.">locks</a>的一些内容</p>
 </div>
       <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
         This site is open source. <a href="https://github.com/daoshi1593/daoshi1593.github.io/edit/main/md-files/cs106L_ALL.md">Improve this page</a>.
