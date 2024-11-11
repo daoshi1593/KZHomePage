@@ -30,6 +30,22 @@
       </div>
       <div id="toc">目录</div>
       <div><h1>all teas</h1>
+<h2>crud</h2>
+<pre><code class="language-cpp">//一个删除算法,用于删除所有为arg的元素
+void remove(T arg) {
+        //是步长也是个数
+        //有一个需要删除,就需要把i+step(i+step不是arg)移到i
+        int step = 0;
+        for (int i = 0; i &lt; size; ++i) {
+            if (SL[i] == arg) {
+                step++;
+            } else if (step &gt; 0) {
+                SL[i - step] = SL[i];
+            }
+        }
+        size -= step;
+    }
+</code></pre>
 <h2>滑动窗口</h2>
 <h3>1456. 定长子串中元音的最大数目</h3>
 <h3>2269. 找到一个数字的 K 美丽值</h3>
@@ -44,32 +60,49 @@ class Solution {
 public:
     long long maxSum(vector&lt;int&gt;&amp; nums, int m, int k) {
         long long ans = 0;
-
+        //维护一个hashmap,验证m不同元素
         map&lt;long long, long long&gt; te;
+        //先来一遍,统计频率表
         for (int j = 0; j &lt; k; j++) {
             te[nums[j]]++;
         }
+        //有效数量
         long sizeq = te.size();
         long long sum = 0;
+        //初始数组num
         sum = accumulate(nums.begin(), nums.begin() + k, 0LL);
+        //如果满足题条件,更新,注意如果全不满足,返回0
         if (sizeq &gt;= m) {
             ans = sum;
         }
+        //开滑
         for (int left = 1; left + k - 1 &lt; nums.size(); left++) {
+            //
             int right = left + k - 1;
+            //如果前驱已经有了,滑动之后数量-1
             if (te[nums[left - 1]] == 1) {
                 sizeq--;
             }
+            //因为滑动离开left-1元素
             te[nums[left - 1]]--;
 
-            //
+            //如果右边元素是新的,++
             if (te[nums[left + k - 1]] == 0) {
                 sizeq++;
             }
+            //统计右边元素
             te[nums[left + k - 1]]++;
-
+            //这个数组的和
             sum = sum + nums[left + k - 1] - nums[left - 1];
+            //如果此hashmap有大于m元素,更新
 
+            /*一个疑问:hashmap里面有此过程
+                te[A]++;
+                te[A]--;
+                此时te[A] == 0
+                直接统计te.size就会出错(因为映射为0的我们不考虑)
+                所以要手动更新sizeq
+            */
             if (sizeq &gt;= m) {
                 if (sum &gt; ans) {
                     ans = sum;
@@ -77,7 +110,6 @@ public:
                 }
             }
         }
-
         return ans;
     }
 };
